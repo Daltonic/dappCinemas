@@ -11,19 +11,19 @@ function Header() {
   return (
     <div className="flex content-center items-center justify-between p-2">
       <div className="flex space-x-4">
-        <div className="p-2">
-          <KeyboardArrowLeftIcon />
-          <KeyboardArrowRightIcon />
-        </div>
+       
 
-        <div className="flex flex-nowrap border-2 text-gray-500 border-gray-300 p-2 rounded-full m-0 auto  min-w-[25vw] max-w-{200px}">
+        <form>
+        <div className="flex border-2 text-gray-500 border-gray-300 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
           <SearchIcon />
           <input
             placeholder="Search everything"
             className="border-none flex-1 text-m px-2 outline-none"
           />
-          <TuneIcon className="flex flex-wrap" />
+          <TuneIcon/>
         </div>
+
+        </form>
       </div>
       <div className="mr-4">
         <div className="flex items-center space-x-4">
@@ -31,7 +31,7 @@ function Header() {
           <NotificationsNoneIcon />
           <img
             src={Avatar}
-            className="rounded-full h-8 w-8 border-solid border-2 border-red-500 "
+            className="rounded-full h-8 w-8 object-cover border-solid border-2 border-red-500 cursor-pointer  "
           />
         </div>
       </div>

@@ -8,11 +8,11 @@ import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { Link } from 'react-router-dom'
 
-function Aside() {
+function Sidebar() {
   return (
-    <div className="hidden sm:block">
-      <div className="w-64 h-screen bg-transparent border-r-2 border-grey-200">
-        <div className="flex flex-col py-4 px-8">
+    <div className="hidden sm:flex">
+      <div className=" w-64 h-screen bg-transparent border-r-2 border-grey-200">
+        <div className="flex flex-col py-4 px-8 ">
           <Link to="/">
             kelzzz.<span className="text-red-500">Movies</span>
           </Link>
@@ -102,4 +102,4 @@ function Aside() {
   )
 }
 
-export default Aside
+export default Sidebar
