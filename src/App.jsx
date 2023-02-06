@@ -2,6 +2,7 @@
 import Sidebar from './component/Sidebar'
 import Header from './component/Header'
 import BrowsePage from './pages/BrowsePage'
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 const App = () => {
@@ -12,6 +13,7 @@ const App = () => {
         <Header />
         <Routes>
           <Route path="/" element={<BrowsePage/>} />
+         
         </Routes>
       </div>
     </div>
