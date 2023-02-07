@@ -1,4 +1,5 @@
 import { React, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import SearchIcon from '@mui/icons-material/Search'
 import TuneIcon from '@mui/icons-material/Tune'
@@ -9,14 +10,19 @@ import CloseIcon from '@mui/icons-material/Close'
 import Avatar from '../asset/Avatar.jpg'
 
 function Header() {
-  const [burgerStatus, setBurgerStatus] = useState(false)
   return (
     <div className="flex flex-col justify-start  p-2">
+      
       <div className="flex content-center items-center justify-between w-full">
+      <div className='flex p-2 sm:hidden'>
+      <Link to="/">
+            dapp.<span className="text-red-500">Cinemas</span>
+          </Link>
+      </div>
         <div className="flex space-x-4 p-1">
           <form>
-            <div className=" sm:flex border-2 text-gray-500 border-gray-300 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
-              <SearchIcon className="hidden" />
+            <div className="hidden sm:flex border-2 text-gray-500 border-gray-300 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
+              <SearchIcon className="hidden md:flex" />
               <input
                 placeholder="Search everything"
                 className="border-none flex-1 text-m px-2 outline-none"
@@ -47,12 +53,26 @@ function Header() {
         </div>
       </div>
 
-      <div className='flex justify-center w-full bg-gray-400 sm:hidden'>
-        <ul className='flex flex-col space-y-4 items-center  '>
-          <li className='p-2 cursor-pointer  shadow-xl hover:text-red-600'>Browse</li>
-          <li className=' p-2 cursor-pointer'>Watchlist</li>
-          <li className='p-2 cursor-pointer'>Coming soon</li>
-          <li className='p-2 cursor-pointer'>Notification</li>
+      <div className='flex  flex-col justify-center w-full p-2 space-y-2 sm:hidden'>
+      <div className="flex space-x-4 p-2 justify-center w-full  shadow-md">
+          <form>
+            <div className="flex border-2 text-gray-500 border-gray-300 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
+              <SearchIcon className="hidden md:flex" />
+              <input
+                placeholder="Search everything"
+                className="border-none flex-1 text-m px-2 outline-none"
+              />
+              <TuneIcon />
+            </div>
+          </form>
+        </div>
+
+        <ul className='flex flex-col space-y-4 items-center text-center w-full  '>
+          <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Browse</li>
+          <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Watchlist</li>
+          <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Coming soon</li>
+          <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Notification</li>
+        
         </ul>
       </div>
     </div>
