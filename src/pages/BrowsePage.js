@@ -30,19 +30,18 @@ function BrowsePage() {
           <h2 className="text-xl font-semibold p-4">Parties</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div className="flex justify-start flex-row space-x-8  sm:space-x-0  sm:flex-col p-4 space-y-2 bg-gray-300 w-auto rounded-lg">
+            <div className="flex justify-start flex-row space-x-8  sm:space-x-0  sm:flex-col p-4 space-y-2 bg-gray-300 w-auto rounded-lg">
               <img
                 src={Spiderman}
                 className="rounded-lg sm:rounded-lg h-42 w-32 object-cover "
               />
-            
-            <div className='flex flex-col'>
-             <h3 className="font-bold">Spider Man</h3>
-              <p className="text-gray-500 font-semibold">
-                Science Fiction, Fantasy
-              </p>
-             
-            </div>
+
+              <div className="flex flex-col">
+                <h3 className="font-bold">Spider Man</h3>
+                <p className="text-gray-500 font-semibold">
+                  Science Fiction, Fantasy
+                </p>
+              </div>
             </div>
 
             <div className="flex justify-start flex-row space-x-8  sm:space-x-0  sm:flex-col p-4 space-y-2 bg-gray-300 w-auto rounded-lg">
@@ -50,14 +49,13 @@ function BrowsePage() {
                 src={Spiderman}
                 className="rounded-lg sm:rounded-lg h-42 w-32 object-cover "
               />
-            
-            <div className='flex flex-col'>
-             <h3 className="font-bold">Spider Man</h3>
-              <p className="text-gray-500 font-semibold">
-                Science Fiction, Fantasy
-              </p>
-             
-            </div>
+
+              <div className="flex flex-col">
+                <h3 className="font-bold">Spider Man</h3>
+                <p className="text-gray-500 font-semibold">
+                  Science Fiction, Fantasy
+                </p>
+              </div>
             </div>
 
             <div className="flex justify-start flex-row space-x-8  sm:space-x-0  sm:flex-col p-4 space-y-2 bg-gray-300 w-auto rounded-lg">
@@ -65,14 +63,13 @@ function BrowsePage() {
                 src={Spiderman}
                 className="rounded-lg sm:rounded-lg h-42 w-32 object-cover "
               />
-            
-            <div className='flex flex-col'>
-             <h3 className="font-bold">Spider Man</h3>
-              <p className="text-gray-500 font-semibold">
-                Science Fiction, Fantasy
-              </p>
-             
-            </div>
+
+              <div className="flex flex-col">
+                <h3 className="font-bold">Spider Man</h3>
+                <p className="text-gray-500 font-semibold">
+                  Science Fiction, Fantasy
+                </p>
+              </div>
             </div>
 
             <div className="flex justify-start flex-row space-x-8  sm:space-x-0  sm:flex-col p-4 space-y-2 bg-gray-300 w-auto rounded-lg">
@@ -80,18 +77,14 @@ function BrowsePage() {
                 src={Spiderman}
                 className="rounded-lg sm:rounded-lg h-42 w-32 object-cover "
               />
-            
-            <div className='flex flex-col'>
-             <h3 className="font-bold">Spider Man</h3>
-              <p className="text-gray-500 font-semibold">
-                Science Fiction, Fantasy
-              </p>
-             
-            </div>
-            </div>
 
-
-          
+              <div className="flex flex-col">
+                <h3 className="font-bold">Spider Man</h3>
+                <p className="text-gray-500 font-semibold">
+                  Science Fiction, Fantasy
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 

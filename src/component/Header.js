@@ -10,6 +10,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import Avatar from '../asset/Avatar.jpg'
 
 function Header() {
+  const [toggle,setToggle]=useState(false);
   return (
     <div className="flex flex-col justify-start  p-2">
       
@@ -49,32 +50,35 @@ function Header() {
             />
         </div>
         <div className="flex m-4 sm:hidden">
-          <MenuIcon className="cursor-pointer" />
+          <MenuIcon onClick={()=>setToggle(!toggle)} className="cursor-pointer" />
         </div>
       </div>
-
-      <div className='flex  flex-col justify-center w-full p-2 space-y-2 sm:hidden'>
-      <div className="flex space-x-4 p-2 justify-center w-full  shadow-md">
-          <form>
-            <div className="flex border-2 text-gray-500 border-gray-300 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
-              <SearchIcon className="hidden md:flex" />
-              <input
-                placeholder="Search everything"
-                className="border-none flex-1 text-m px-2 outline-none"
-              />
-              <TuneIcon />
-            </div>
-          </form>
+      {toggle ? (
+        <div className='flex  flex-col justify-center w-full p-2 space-y-2 sm:hidden'>
+        <div className="flex space-x-4 p-2 justify-center w-full  shadow-md">
+            <form>
+              <div className="flex border-2 text-gray-500 border-gray-300 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
+                <SearchIcon className="hidden md:flex" />
+                <input
+                  placeholder="Search everything"
+                  className="border-none flex-1 text-m px-2 outline-none"
+                />
+                <TuneIcon />
+              </div>
+            </form>
+          </div>
+  
+          <ul className='flex flex-col space-y-4 items-center text-center w-full  '>
+            <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Browse</li>
+            <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Watchlist</li>
+            <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Coming soon</li>
+            <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Notification</li>
+          
+          </ul>
         </div>
-
-        <ul className='flex flex-col space-y-4 items-center text-center w-full  '>
-          <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Browse</li>
-          <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Watchlist</li>
-          <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Coming soon</li>
-          <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Notification</li>
-        
-        </ul>
-      </div>
+      ) : null
+       }
+      
     </div>
   )
 }
