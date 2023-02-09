@@ -2,6 +2,7 @@
 import Sidebar from './component/Sidebar'
 import Header from './component/Header'
 import BrowsePage from './pages/BrowsePage'
+import MovieDetailsPage from './pages/MovieDetailsPage'
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
@@ -13,6 +14,7 @@ const App = () => {
         <Header />
         <Routes>
           <Route path="/" element={<BrowsePage/>} />
+          <Route path="/moviedetails" element={<MovieDetailsPage/>} />
          
         </Routes>
       </div>

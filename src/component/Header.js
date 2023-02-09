@@ -68,13 +68,13 @@ function Header() {
             </form>
           </div>
   
-          <ul className='flex flex-col space-y-4 items-center text-center w-full  '>
-            <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Browse</li>
-            <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Watchlist</li>
-            <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Coming soon</li>
-            <li className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Notification</li>
+          <div className='flex flex-col space-y-4 items-center text-center w-full  '>
+            <Link to='/' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Browse</Link>
+            <Link to='/moviedetails' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Watchlist</Link>
+            <Link to='' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Coming soon</Link>
+            <Link to='' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Notification</Link>
           
-          </ul>
+          </div>
         </div>
       ) : null
        }

@@ -21,7 +21,7 @@ function Sidebar() {
             <div className="flex flex-col space-y-2 ">
              <div className=' hover:border-l-2 border-red-400'>
              <Link
-                to="/browsepage"
+                to="/"
                 className=" ml-8 cursor-pointer text-gray-600 hover:text-red-700 "
               >
                 <ExploreIcon />
@@ -30,7 +30,7 @@ function Sidebar() {
              </div>
              <div className='hover:border-l-2 border-red-400'>
              <Link
-                to="/"
+                to="/moviedetails"
                 className=" ml-8 cursor-pointer text-gray-600 hover:text-red-700"
               >
                 <FavoriteIcon />
