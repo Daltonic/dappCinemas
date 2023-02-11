@@ -69,7 +69,7 @@ function Header() {
           </div>
   
           <div className='flex flex-col space-y-4 items-center text-center w-full  '>
-            <Link to='/' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Browse</Link>
+            <p className='p-2   shadow-md w-full bg-white'><Link to='/' ><span  className='p-2 cursor-pointer  hover: shadow-md rounded-md bg-white hover:bg-gray-300 '>Browse</span></Link></p>
             <Link to='/moviedetails' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Watchlist</Link>
             <Link to='' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Coming soon</Link>
             <Link to='' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Notification</Link>

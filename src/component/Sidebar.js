@@ -19,7 +19,7 @@ function Sidebar() {
           <div className="mt-8">
             <h6 className="text-xs mb-4">News Feed</h6>
             <div className="flex flex-col space-y-2 ">
-             <div className=' hover:border-l-2 border-red-400'>
+             <div className=' border-l-2 transparent hover:border-l-2 hover:border-red-400'>
              <Link
                 to="/"
                 className=" ml-8 cursor-pointer text-gray-600 hover:text-red-700 "
@@ -28,7 +28,7 @@ function Sidebar() {
                 <span className="ml-4 text-sm text-gray-700">Browse</span>
               </Link>
              </div>
-             <div className='hover:border-l-2 border-red-400'>
+             <div className='border-l-2 transparent hover:border-l-2 hover:border-red-400'>
              <Link
                 to="/moviedetails"
                 className=" ml-8 cursor-pointer text-gray-600 hover:text-red-700"
@@ -38,7 +38,7 @@ function Sidebar() {
               </Link>
              </div>
             
-            <div  className='hover:border-l-2 border-red-400'>
+            <div  className='border-l-2 transparent hover:border-l-2 hover:border-red-400'>
             <Link
                 to="/"
                 className=" ml-8 cursor-pointer text-gray-600 hover:text-red-700"
