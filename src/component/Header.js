@@ -9,30 +9,30 @@ import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import Avatar from '../asset/Avatar.jpg'
 const Menu = () =>(
-<>
-<div className='flex  flex-col justify-center w-full p-2 space-y-2 sm:hidden'>
-        <div className="flex space-x-4 p-2 justify-center w-full  shadow-md">
-            <form>
-              <div className="flex border-2 text-gray-500 border-gray-300 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
-                <SearchIcon className="hidden md:flex" />
-                <input
-                  placeholder="Search everything"
-                  className="border-none flex-1 text-m px-2 outline-none"
-                />
-                <TuneIcon />
+  <>
+    <div className='flex  flex-col justify-center w-full p-2 space-y-2 sm:hidden'>
+            <div className="flex space-x-4 p-2 justify-center w-full  shadow-md">
+                <form>
+                  <div className="flex border-2 text-gray-500 border-gray-300 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
+                    <SearchIcon className="hidden md:flex" />
+                    <input
+                      placeholder="Search everything"
+                      className="border-none flex-1 text-m px-2 outline-none"
+                    />
+                    <TuneIcon />
+                  </div>
+                </form>
               </div>
-            </form>
-          </div>
-  
-          <div className='flex flex-col space-y-4 items-center text-center w-full  '>
-            <p className='p-2   shadow-md w-full bg-white'><Link to='/' ><span  className='p-2 cursor-pointer  hover: shadow-md rounded-md bg-white hover:bg-gray-300 '>Browse</span></Link></p>
-            <Link to='/moviedetails' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Watchlist</Link>
-            <Link to='' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Coming soon</Link>
-            <Link to='' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Notification</Link>
-          
-          </div>
-        </div>
-</>
+      
+              <div className='flex flex-col space-y-4 items-center text-center w-full  '>
+                <p className='p-2   shadow-md w-full bg-white'><Link to='/' ><span  className='p-2 cursor-pointer  hover: shadow-md rounded-md bg-white hover:bg-gray-300 '>Browse</span></Link></p>
+                <Link to='/moviedetails' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Watchlist</Link>
+                <Link to='' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Coming soon</Link>
+                <Link to='' className='p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400'>Notification</Link>
+              
+              </div>
+    </div>
+  </>
 
 );
 function Header() {
