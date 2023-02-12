@@ -18,7 +18,7 @@ function MovieDetailsPage() {
           <p className="font-bold">
             DATE: <span className="font-thin">February 9, Thursday</span>
           </p>
-          <CalendarMonthIcon className="text-gray-600" />
+          <CalendarMonthIcon  className="text-gray-600" />
         </div>
         <div className="grid grid-cols-1  gap-4 p-2">
           <div className="flex align-center items-center justify-center  space-x-4  bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
