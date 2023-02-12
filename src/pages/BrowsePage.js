@@ -1,36 +1,13 @@
 import React from 'react'
 import heroimage from '../asset/heroimage.jpg'
-import { Spiderman, Superman, Batman, Antman } from './Partiesimage.js'
+import { Spiderman, Superman, Batman, Antman } from './BrowsePageData.js';
+import PartiesData from './BrowsePageData.js';
 import Emancipation from '../asset/emancipation.jpg'
 import Blackadam from '../asset/blackadam.jpg'
 import Avengers from '../asset/avengers.jpg'
 import Sherlockholmes from '../asset/sherlockholmes.jpg'
 import { Description } from '@mui/icons-material'
 import { ListItemSecondaryAction } from '@mui/material'
-
-const PartiesData = [
-  {
-    header: 'Spider Man',
-    description: 'Science Fiction, Fantasy',
-    image: Spiderman,
-  },
-  {
-    header: 'Super Man',
-    description: 'Science Fiction, Fantasy',
-    image: Superman,
-  },
-  {
-    header: 'Bat Man',
-    description: 'Science Fiction, Fantasy',
-    image: Batman,
-  },
-
-  {
-    header: 'Ant Man',
-    description: 'Science Fiction, Fantasy',
-    image: Antman,
-  },
-]
 
 function BrowsePage() {
   return (
