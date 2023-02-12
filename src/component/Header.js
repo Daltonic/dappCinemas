@@ -10,7 +10,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import Avatar from '../asset/Avatar.jpg'
 const Menu = () =>(
   <>
-    <div className='flex  flex-col justify-center w-full p-2 space-y-2 sm:hidden'>
+    <div className='flex  flex-col justify-center w-full p-2 space-y-2 sm:hidden bounce-in-fwd'>
             <div className="flex space-x-4 p-2 justify-center w-full  shadow-md">
                 <form>
                   <div className="flex border-2 text-gray-500 border-gray-300 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
@@ -36,7 +36,7 @@ const Menu = () =>(
 
 );
 function Header() {
-  const [toggle,setToggle]=useState(false);
+  const [toggleMenu,setToggleMenu]=useState(false);
   return (
     <div className="flex flex-col justify-start  p-2">
       
@@ -76,10 +76,14 @@ function Header() {
             />
         </div>
         <div className="flex m-4 sm:hidden">
-          <MenuIcon onClick={()=>setToggle(!toggle)} className="cursor-pointer" />
+          {toggleMenu 
+          ? <CloseIcon  onClick={()=>setToggleMenu(false)} className="cursor-pointer"/>
+          :  <MenuIcon onClick={()=>setToggleMenu(true)} className="cursor-pointer" />
+          }
+         
         </div>
       </div>
-      {toggle ? (
+      {toggleMenu ? (
        <Menu />
       ) : null
        }

@@ -1,4 +1,4 @@
-
+import './App.css' ;
 import Sidebar from './component/Sidebar'
 import Header from './component/Header'
 import BrowsePage from './pages/BrowsePage'
