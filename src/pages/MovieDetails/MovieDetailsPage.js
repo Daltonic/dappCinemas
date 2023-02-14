@@ -1,5 +1,5 @@
 import React from 'react'
-import Emancipation from '../asset/emancipation.jpg'
+import Emancipation from '../../asset/emancipation.jpg'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 
 function MovieDetailsPage() {
@@ -10,7 +10,7 @@ function MovieDetailsPage() {
       </div>
       <div className="flex flex-col space-y-4 align-center text-center w-full">
         <div className="flex flex-col space-y-2">
-          <h3 className="font-black text-2xl">Emmancipation</h3>
+          <h3 className="font-black text-2xl">Emancipation</h3>
           <p className="text-gray-700">Crime,Drama,Thrill</p>
           <p className="text-gray-700">Runtime: 2h 2min</p>
         </div>

@@ -1,10 +1,11 @@
-import './App.css' ;
+
 import Sidebar from './component/Sidebar'
 import Header from './component/Header'
-import BrowsePage from './pages/BrowsePage'
-import MovieDetailsPage from './pages/MovieDetailsPage'
+
+import {BrowsePage ,MovieDetailsPage} from './pages';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import './App.css' ;
 
 const App = () => {
   return (

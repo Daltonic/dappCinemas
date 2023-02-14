@@ -1,20 +1,18 @@
 import React from 'react'
-import heroimage from '../asset/heroimage.jpg'
-import { Spiderman, Superman, Batman, Antman } from './BrowsePageData.js';
-import PartiesData from './BrowsePageData.js';
-import Emancipation from '../asset/emancipation.jpg'
-import Blackadam from '../asset/blackadam.jpg'
-import Avengers from '../asset/avengers.jpg'
-import Sherlockholmes from '../asset/sherlockholmes.jpg'
-import { Description } from '@mui/icons-material'
-import { ListItemSecondaryAction } from '@mui/material'
+import images from '../../constants/images';
+import data from '../../constants/data';
+
+
+
+import Blackadam from '../../asset/blackadam.jpg'
+import Avengers from '../../asset/avengers.jpg'
 
 function BrowsePage() {
   return (
     <div className="flex flex-col w-full p-4">
       <div
-        style={{ backgroundImage: 'url(' + heroimage + ')' }}
-        className="w-full h-60 rounded-3xl bg-no-repeat bg-cover bg-center mb-4 flex flex-col"
+        style={{ backgroundImage: 'url(' + images.Heroimage + ')' }}
+        className="w-full h-full rounded-3xl bg-no-repeat bg-cover bg-center mb-4 flex flex-col"
       >
         <div className="text-white p-8 space-y-8">
           <div className="space-y-2">
@@ -33,10 +31,11 @@ function BrowsePage() {
           <h2 className="text-xl font-semibold p-4">Parties</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {PartiesData.map((item, index) => (
+            
+            {data.PartiesData.map((item, index) => (
               <div className="flex justify-start flex-row space-x-8  sm:space-x-0  sm:flex-col p-4 space-y-2 bg-gray-300 w-auto rounded-lg">
                 <img
-                  src={item.image}
+                  src={item.imgUrl}
                   className="rounded-lg sm:rounded-lg h-42 w-32 object-cover "
                 />
 
@@ -56,56 +55,30 @@ function BrowsePage() {
             <h2 className="text-xl font-semibold p-4">Continue Watching</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-              <img
-                src={Emancipation}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
-
-              <img
-                src={Emancipation}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
-
-              <img
-                src={Emancipation}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
-
-              <img
-                src={Emancipation}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
+              {/* ContinueWatchingDataA' */}
+              {data.ContinueWatchingDataA.map((item, index) => (
+                <div>
+                  <img
+                    src={item.imgUrl}
+                    className="max-w-full h-auto rounded-lg"
+                    alt=""
+                  />
+                </div>
+              ))}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-              <img
-                src={Sherlockholmes}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
-
-              <img
-                src={Sherlockholmes}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
-
-              <img
-                src={Sherlockholmes}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
-
-              <img
-                src={Sherlockholmes}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
-            </div>
+              {/* ContinueWatchingDataB' */}
+              {data.ContinueWatchingDataB.map((item, index) => (
+                <div>
+                  <img
+                    src={item.imgUrl}
+                    className="max-w-full h-auto rounded-lg"
+                    alt=""
+                  />
+                </div>
+              ))}
+            </div> 
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
               <img
