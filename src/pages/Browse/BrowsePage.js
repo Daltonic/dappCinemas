@@ -1,11 +1,6 @@
 import React from 'react'
-import images from '../../constants/images';
-import data from '../../constants/data';
-
-
-
-import Blackadam from '../../asset/blackadam.jpg'
-import Avengers from '../../asset/avengers.jpg'
+import images from '../../constants/images'
+import data from '../../constants/data'
 
 function BrowsePage() {
   return (
@@ -31,17 +26,22 @@ function BrowsePage() {
           <h2 className="text-xl font-semibold p-4">Parties</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            
             {data.PartiesData.map((item, index) => (
-              <div className="flex justify-start flex-row space-x-8  sm:space-x-0  sm:flex-col p-4 space-y-2 bg-gray-300 w-auto rounded-lg">
+              <div
+                key={index}
+                className="flex justify-start flex-row space-x-8  sm:space-x-0  sm:flex-col p-4 space-y-2 bg-gray-300 w-auto rounded-lg"
+              >
                 <img
+                  key={item.id}
                   src={item.imgUrl}
                   className="rounded-lg sm:rounded-lg h-42 w-32 object-cover "
                 />
 
                 <div className="flex flex-col">
-                  <h3 className="font-bold">{item.header}</h3>
-                  <p className="text-gray-500 font-semibold">
+                  <h3 key={item.id} className="font-bold">
+                    {item.header}
+                  </h3>
+                  <p key={item.id} className="text-gray-500 font-semibold">
                     {item.description}
                   </p>
                 </div>
@@ -57,8 +57,9 @@ function BrowsePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
               {/* ContinueWatchingDataA' */}
               {data.ContinueWatchingDataA.map((item, index) => (
-                <div>
+                <div key={index}>
                   <img
+                    key={item.id}
                     src={item.imgUrl}
                     className="max-w-full h-auto rounded-lg"
                     alt=""
@@ -70,66 +71,45 @@ function BrowsePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
               {/* ContinueWatchingDataB' */}
               {data.ContinueWatchingDataB.map((item, index) => (
-                <div>
+                <div key={index}>
                   <img
+                    key={item.id}
                     src={item.imgUrl}
                     className="max-w-full h-auto rounded-lg"
                     alt=""
                   />
                 </div>
               ))}
-            </div> 
-
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-              <img
-                src={Avengers}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
-
-              <img
-                src={Avengers}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
-
-              <img
-                src={Avengers}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
-
-              <img
-                src={Avengers}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-              <img
-                src={Blackadam}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
+              {/* ContinueWatchingDataC' */}
+              {data.ContinueWatchingDataC.map((item, index) => (
+                <div key={index}>
+                  <img
+                    key={item.id}
+                    src={item.imgUrl}
+                    className="max-w-full h-auto rounded-lg"
+                    alt=""
+                  />
+                </div>
+              ))}
+            </div>
 
-              <img
-                src={Blackadam}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+              {/* ContinueWatchingDataD' */}
 
-              <img
-                src={Blackadam}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
-
-              <img
-                src={Blackadam}
-                className="max-w-full h-auto rounded-lg"
-                alt=""
-              />
+              {data.ContinueWatchingDataD.map((item, index) => (
+                <div key={index}>
+                
+                  <img
+                    key={item.id}
+                    src={item.imgUrl}
+                    className="max-w-full h-auto rounded-lg"
+                    alt=""
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>

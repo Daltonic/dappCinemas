@@ -7,7 +7,7 @@ import VoiceChatIcon from '@mui/icons-material/VoiceChat'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
-import Avatar from '../asset/Avatar.jpg'
+import Avatar from '../../asset/Avatar.jpg'
 const Menu = () =>(
   <>
     <div className='flex  flex-col justify-center w-full p-2 space-y-2 sm:hidden bounce-in-fwd'>

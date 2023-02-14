@@ -65,7 +65,38 @@ const ContinueWatchingDataB = [
     imgUrl: images.Sherlockholmes,
   },
 ];
+const ContinueWatchingDataC =[
+  {
+    imgUrl: images.Avengers
+  },
+  {
+    imgUrl: images.Avengers
+  },
+  {
+    imgUrl: images.Avengers
+  },
+  {
+    imgUrl: images.Avengers
+  },
+
+];
+
+const ContinueWatchingDataD =[
+  {
+    imgUrl: images.Blackadam
+  },
+  {
+    imgUrl: images.Blackadam
+  },
+  {
+    imgUrl: images.Blackadam
+  },
+  {
+    imgUrl: images.Blackadam
+  },
+
+];
 
 
 
-export default {PartiesData,ContinueWatchingDataA,ContinueWatchingDataB}
+export default {PartiesData,ContinueWatchingDataA,ContinueWatchingDataB,ContinueWatchingDataC,ContinueWatchingDataD}
