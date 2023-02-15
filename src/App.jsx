@@ -9,7 +9,7 @@ const App = () => {
     <div className="h-screen flex">
       <Sidebar />
       <div className="flex-1 overflow-auto ">
-        <Header />
+        <Header/>
         <Routes>
           <Route path="/" element={<BrowsePage />} />
           <Route path="/moviedetails" element={<MovieDetailsPage />} />

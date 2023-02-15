@@ -97,7 +97,7 @@ function Sidebar() {
 
           <div className="mt-6 border-t-2 border-grey">
             <div className="flex mt-4 list-none">
-            <button type="button" className="inline-block px-6 py-2 border-2 border-red-600  font-medium text-xs leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out hover:bg-gradient-to-r from-cyan-500 to-red-500 font-bold  rounded-full hover:text-white">Connect Wallet</button>
+            <button type="button" className="inline-block px-6 py-2 border-2 border-red-600  font-medium text-xs leading-tight uppercase rounded-full hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out hover:bg-gradient-to-r from-cyan-500 to-red-500 hover:text-white">Connect Wallet</button>
             </div>
           </div>
         </div>

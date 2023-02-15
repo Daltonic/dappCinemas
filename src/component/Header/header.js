@@ -8,9 +8,10 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import Avatar from '../../asset/Avatar.jpg'
+import { borderBottom } from '@mui/system'
 const Menu = () =>(
   <>
-    <div className='flex  flex-col justify-center w-full p-2 space-y-2 sm:hidden bounce-in-fwd'>
+    <div className='flex flex-col justify-center w-full p-2 space-y-2 sm:hidden bounce-in-fwd'>
             <div className="flex space-x-4 p-2 justify-center w-full  shadow-md">
                 <form>
                   <div className="flex border-2 text-gray-500 border-gray-300 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
@@ -87,7 +88,8 @@ function Header() {
        <Menu />
       ) : null
        }
-      
+      <div style={{borderBottom: '1px solid #B2BEB5'}}
+      className='p-2'></div>
     </div>
   )
 }
