@@ -5,7 +5,6 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import Avatar from '../../asset/Avatar.jpg'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle'
-import LogoutIcon from '@mui/icons-material/Logout'
 import { Link } from 'react-router-dom'
 
 function Sidebar() {
@@ -40,7 +39,7 @@ function Sidebar() {
             
             <div  className='border-l-2 transparent hover:border-l-2 hover:border-red-400'>
             <Link
-                to="/"
+                to="/form"
                 className=" ml-8 cursor-pointer text-gray-600 hover:text-red-700"
               >
                 <CalendarMonthIcon />
