@@ -31,17 +31,19 @@ function BrowsePage() {
                 key={index}
                 className="flex justify-start flex-row space-x-8  sm:space-x-0  sm:flex-col p-4 space-y-2 bg-gray-300 w-auto rounded-lg"
               >
-                <img
+               <div className='flex h-full w-auto'>
+               <img
                   key={item.id}
                   src={item.imgUrl}
-                  className="rounded-lg sm:rounded-lg h-42 w-32 object-cover "
+                  className="rounded-lg  object-cover "
                 />
+               </div>
 
                 <div className="flex flex-col">
-                  <h3 key={item.id} className="font-bold">
+                  <h3 key={item.id} className="font-bold md:text-lg">
                     {item.header}
                   </h3>
-                  <p key={item.id} className="text-gray-500 font-semibold">
+                  <p key={item.id} className=" md:text-gray-500 font-normal md:text-base">
                     {item.description}
                   </p>
                 </div>
