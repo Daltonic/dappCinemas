@@ -20,13 +20,32 @@ function MovieDetailsPage() {
           </p>
           <CalendarMonthIcon className="text-gray-600" />
         </div>
-        <div className="grid grid-cols-1  gap-4 p-2">
-          <div className="flex align-center items-center justify-center  space-x-4  bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
-            <p className="">11:30 AM</p>
-            <sub>
-              5/10 <span>spaces</span>
-            </sub>
-            <button
+        <div className="grid grid-cols-1  gap-4 p-2 ">
+          <div className="flex flex-col space-y-4 align-center items-center justify-center  md:flex-row align-center  space-x-4  bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
+           <div> <p >11:30 AM</p></div>
+            <div>  <span>
+              5/10 <sub>spaces</sub>
+            </span></div>
+         <div>
+         <button
+              className="bg-black py-1 px-4 text-xs font-bold text-white border-2 border-black
+            hover:bg-transparent  rounded-full
+             hover:border-2 hover:border-red-600 hover:text-black "
+            >
+              BUY TICKET
+            </button>
+         </div>
+          </div>
+
+          <div className="flex flex-col space-y-4 align-center items-center justify-center  md:flex-row align-center  space-x-4  bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
+           <div> <p >2:30 PM</p></div>
+        <div>
+        <span>
+              5/10 <sub>spaces</sub>
+            </span>
+        </div>
+          <div>
+          <button
               className="bg-black py-1 px-4 text-xs font-bold text-white border-2 border-black
             hover:bg-transparent  rounded-full
              hover:border-2 hover:border-red-600 hover:text-black "
@@ -34,13 +53,33 @@ function MovieDetailsPage() {
               BUY TICKET
             </button>
           </div>
+          </div>
 
-          <div className="flex align-center items-center justify-center  space-x-4  bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
-            <p>2:30 PM</p>
-            <sub>
-              5/10 <span>spaces</span>
-            </sub>
-            <button
+          <div className="flex flex-col space-y-4 align-center items-center justify-center  md:flex-row align-center  space-x-4  bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
+            <div><p >4:15 PM</p></div>
+           <div> <span>
+              5/10 <sub>spaces</sub>
+            </span></div>
+            <div><button
+              className="bg-black py-1 px-4 text-xs font-bold text-white border-2 border-black
+            hover:bg-transparent  rounded-full
+             hover:border-2 hover:border-red-600 hover:text-black "
+            >
+              BUY TICKET
+            </button></div>
+          </div>
+
+          <div className="flex flex-col space-y-4 align-center items-center justify-center  md:flex-row align-center  space-x-4  bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
+          <div>
+          <p >8:30 PM</p>
+          </div>
+           <div>
+           <span>
+              5/10 <sub>spaces</sub>
+            </span>
+           </div>
+          <div>
+          <button
               className="bg-black py-1 px-4 text-xs font-bold text-white border-2 border-black
             hover:bg-transparent  rounded-full
              hover:border-2 hover:border-red-600 hover:text-black "
@@ -48,33 +87,6 @@ function MovieDetailsPage() {
               BUY TICKET
             </button>
           </div>
-
-          <div className="flex align-center items-center justify-center  space-x-4  bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
-            <p>4:15 PM</p>
-            <sub>
-              5/10 <span>spaces</span>
-            </sub>
-            <button
-              className="bg-black py-1 px-4 text-xs font-bold text-white border-2 border-black
-            hover:bg-transparent  rounded-full
-             hover:border-2 hover:border-red-600 hover:text-black "
-            >
-              BUY TICKET
-            </button>
-          </div>
-
-          <div className="flex align-center items-center justify-center  space-x-4  bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
-            <p>8:30 PM</p>
-            <sub>
-              5/10 <span>spaces</span>
-            </sub>
-            <button
-              className="bg-black py-1 px-4 text-xs font-bold text-white border-2 border-black
-            hover:bg-transparent  rounded-full
-             hover:border-2 hover:border-red-600 hover:text-black "
-            >
-              BUY TICKET
-            </button>
           </div>
         </div>
 
@@ -82,8 +94,8 @@ function MovieDetailsPage() {
           <h4 className="font-black text-2xl">Recent Bookings</h4>
         </div>
         <div className="grid grid-cols-1  gap-4 p-2">
-          <div className="flex flex-col bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
-            <div className="flex space-x-4 justify-center p-2">
+          < div className="flex flex-col bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
+            <div className="flex flex-col space-y-4 align-center items-center justify-center  md:flex-row align-center  space-x-4 ">
               <p>0xe23....12df</p>
               <p>11:30AM - 1:30PM</p>
             </div>

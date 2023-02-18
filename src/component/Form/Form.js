@@ -2,9 +2,10 @@ import React from 'react'
 
 const Form = () => {
   return (
-    <div className="flex justify-center items-center w-full h-full relative">
-      <div className="block p-6 rounded-lg max-w-md m-auto absolute shadow-lg shadow-gray-700">
-        <form>
+    <div className="flex justify-center items-center py-12 m-auto w-full  ">
+      <div className="block rounded-lg  justify-center items-center m-auto shadow-lg shadow-gray-400">
+        <form className='p-6'>
+          <div className='flex items-center justify-center mb-4'><h2>Add Movies</h2></div>
           <div className="form-group mb-6 w-full">
             <input
               type="url"
