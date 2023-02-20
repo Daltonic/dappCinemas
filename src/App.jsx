@@ -1,6 +1,6 @@
 import { BrowsePage, MovieDetailsPage } from './pages'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import {Header,Sidebar,Form} from './component'
+import {Header,Sidebar,Addmovies,Timeslot} from './component'
 
 import './App.css'
 
@@ -13,7 +13,8 @@ const App = () => {
         <Routes>
           <Route path="/" element={<BrowsePage />} />
           <Route path="/moviedetails" element={<MovieDetailsPage />} />
-          <Route path="/form" element={<Form />} />
+          <Route path="/addmovies" element={<Addmovies />} />
+          <Route path="/timeslot" element={<Timeslot />} />
         </Routes>
       </div>
     </div>

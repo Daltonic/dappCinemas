@@ -39,11 +39,21 @@ function Sidebar() {
             
             <div  className='border-l-2 transparent hover:border-l-2 hover:border-red-400'>
             <Link
-                to="/form"
+                to="/addmovies"
                 className=" ml-8 cursor-pointer text-gray-600 hover:text-red-700"
               >
                 <CalendarMonthIcon />
-                <span className="ml-4 text-sm text-gray-700">Coming Soon</span>
+                <span className="ml-4 text-sm text-gray-700">Add Movies</span>
+              </Link>
+            </div>
+
+            <div  className='border-l-2 transparent hover:border-l-2 hover:border-red-400'>
+            <Link
+                to="/timeslot"
+                className=" ml-8 cursor-pointer text-gray-600 hover:text-red-700"
+              >
+                <CalendarMonthIcon />
+                <span className="ml-4 text-sm text-gray-700">Times Slot</span>
               </Link>
             </div>
              
