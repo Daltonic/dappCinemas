@@ -86,7 +86,7 @@ function Header() {
             <Avatar
               alt="Remy Sharp"
               src={Avatarimg}
-              sx={{ width: 56, height: 56 }}
+              sx={{ width: 42, height: 42 }}
               className=" border-solid border-2 border-red-500 cursor-pointer "
             />
           </div>
