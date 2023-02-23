@@ -3,9 +3,9 @@ import data from '../../constants/data'
 
 function timeslot() {
   return (
-    <div className="flex justify-center items-center m-auto w-full px-16 py-12 lg:py-12 ">
-      <div className="block rounded-lg  justify-center items-center m-auto shadow-lg shadow-gray-400">
-        <form className="p-6">
+    <div className="py-4 md:py-12 flex justify-center items-center m-auto w-full  lg:py-12 ">
+      <div className="min-w-[50%] block  rounded-lg justify-center items-center m-auto shadow-lg shadow-gray-400">
+        <form className="p-8 w-full">
           <div className="flex items-center justify-center mb-4">
             <h2>Time Slot</h2>
           </div>
