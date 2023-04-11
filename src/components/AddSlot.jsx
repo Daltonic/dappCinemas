@@ -56,34 +56,6 @@ const AddSlot = () => {
     ); 
   }
 
-  const filterListedTime = (time, selectedDate, blockedStamps) => {
-    const selectedDateTime = new Date(selectedDate);
-    selectedDateTime.setHours(time.getHours());
-    selectedDateTime.setMinutes(time.getMinutes());
-
-    const currentDateTime = new Date();
-    const isSameDay =
-      currentDateTime.getDate() === selectedDateTime.getDate() &&
-      currentDateTime.getMonth() === selectedDateTime.getMonth() &&
-      currentDateTime.getFullYear() === selectedDateTime.getFullYear();
-
-    if (!isSameDay) {
-      return true; // allow all times on future dates
-    }
-
-    const isBlocked = blockedStamps.some((stamp) => {
-      const stampDateTime = new Date(stamp);
-      return (
-        stampDateTime.getHours() === selectedDateTime.getHours() &&
-        stampDateTime.getMinutes() === selectedDateTime.getMinutes() &&
-        stampDateTime.getDate() === selectedDateTime.getDate() &&
-        stampDateTime.getMonth() === selectedDateTime.getMonth() &&
-        stampDateTime.getFullYear() === selectedDateTime.getFullYear()
-      );
-    });
-
-    return !isBlocked;
-  };
 
 
 
@@ -93,11 +65,11 @@ const AddSlot = () => {
 
   
 useEffect(() => {
-  if (!day) return;
+  if (!day) return
 
   getSlots(day)
     .then(() => {
-      setShow(true);
+      setShow(false);
     })
     .catch((error) => {
       console.error(error);
@@ -107,6 +79,7 @@ useEffect(() => {
 useEffect(() => {
   if (!slotsForDay.length) {
     setShow(true);
+    setBlockedStamps([]);
     return;
   }
 
@@ -217,8 +190,9 @@ useEffect(() => {
               border-0 focus:outline-none focus:ring-0"
             />
           </div>
-          {show ? (
+          {show && day ? (
             <>
+              {console.log(blockedStamps)}
               <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
                 <DatePicker
                   selected={startTime}
@@ -227,8 +201,8 @@ useEffect(() => {
                   showTimeSelectOnly
                   minTime={getStartUpDayTimestamp()}
                   maxTime={getEndOfDayTimestamp()}
-                  filterTime={(time) => filterListedTime(time, day, blockedStamps)}
                   timeCaption="Start Time"
+                  excludeTimes={blockedStamps}
                   timeIntervals={timeInterval}
                   dateFormat="h:mm aa"
                   placeholderText="Select start time..."
@@ -245,7 +219,7 @@ useEffect(() => {
                   showTimeSelectOnly
                   timeFormat="p"
                   timeIntervals={timeInterval}
-                  filterTime={(time) => filterListedTime(time, day, blockedStamps)}
+                  excludeTimes={blockedStamps}
                   minTime={getTimestamp(startTime)}
                   maxTime={getEndOfDayTimestamp()}
                   timeCaption="End Time"
