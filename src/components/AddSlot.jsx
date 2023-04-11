@@ -61,13 +61,31 @@ const AddSlot = () => {
     selectedDateTime.setHours(time.getHours());
     selectedDateTime.setMinutes(time.getMinutes());
 
+    const currentDateTime = new Date();
+    const isSameDay =
+      currentDateTime.getDate() === selectedDateTime.getDate() &&
+      currentDateTime.getMonth() === selectedDateTime.getMonth() &&
+      currentDateTime.getFullYear() === selectedDateTime.getFullYear();
+
+    if (!isSameDay) {
+      return true; // allow all times on future dates
+    }
+
     const isBlocked = blockedStamps.some((stamp) => {
-      const stampTime = new Date(stamp);
-      return stampTime.getTime() === selectedDateTime.getTime();
+      const stampDateTime = new Date(stamp);
+      return (
+        stampDateTime.getHours() === selectedDateTime.getHours() &&
+        stampDateTime.getMinutes() === selectedDateTime.getMinutes() &&
+        stampDateTime.getDate() === selectedDateTime.getDate() &&
+        stampDateTime.getMonth() === selectedDateTime.getMonth() &&
+        stampDateTime.getFullYear() === selectedDateTime.getFullYear()
+      );
     });
 
     return !isBlocked;
   };
+
+
 
   const handleClose = () => {
     setGlobalState("addSlotModal", "scale-0");
@@ -86,27 +104,33 @@ useEffect(() => {
     });
 }, [day]);
 
-
 useEffect(() => {
   if (!slotsForDay.length) {
     setShow(true);
     return;
   }
 
-  const filteredTimeSlots = slotsForDay.filter((slot) => !slot.deleted);
+  // Check if there are slots available for the selected day
+  const slotsAvailable = slotsForDay.some((slot) => !slot.deleted);
 
-  const timestamps = [];
-  filteredTimeSlots.forEach((slot) => {
-    const { startTime, endTime } = slot;
-    let currTime = new Date(startTime);
-    while (currTime < endTime) {
-      timestamps.push(currTime.getTime());
-      currTime.setMinutes(currTime.getMinutes() + 10);
-    }
-  });
+  if (slotsAvailable) {
+    const filteredTimeSlots = slotsForDay.filter((slot) => !slot.deleted);
 
-  setBlockedStamps(timestamps);
-  setShow(true);
+    const timestamps = [];
+    filteredTimeSlots.forEach((slot) => {
+      const { startTime, endTime } = slot;
+      let currTime = new Date(startTime);
+      while (currTime < endTime) {
+        timestamps.push(currTime.getTime());
+        currTime.setMinutes(currTime.getMinutes() + 10);
+      }
+    });
+
+    setBlockedStamps(timestamps);
+    setShow(true);
+  } else {
+    setShow(true);
+  }
 }, [slotsForDay]);
 
 
@@ -149,6 +173,7 @@ useEffect(() => {
     setEndTime(null)
     setTicketPrice('')
     setCapacity('')
+    setShow(false)
    }
 
   
