@@ -218,8 +218,6 @@ const getSlots = async (day) => {
     const contract = await getEthereumContract();
     const slots = await contract.getSlots(day);
     setGlobalState("slotsForDay", structuredTimeslot(slots));
-    return slots;
-    console.log(slots)
   } catch (err) {
     reportError(err);
   }

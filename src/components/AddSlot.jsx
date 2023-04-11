@@ -56,7 +56,7 @@ const AddSlot = () => {
     ); 
   }
 
-  const filterListedTime = (time, selectedDate) => {
+  const filterListedTime = (time, selectedDate, blockedStamps) => {
     const selectedDateTime = new Date(selectedDate);
     selectedDateTime.setHours(time.getHours());
     selectedDateTime.setMinutes(time.getMinutes());
@@ -74,39 +74,40 @@ const AddSlot = () => {
   };
 
   
-  useEffect(() => {
-    const fetchTimeSlots = async () => {
-      if (!day) return;
+useEffect(() => {
+  if (!day) return;
 
-     await getSlots(day).then((slots)=>{
-        const slotsForDay = slots
-
-        const filteredTimeSlots = slotsForDay.filter(
-          (slot) => !slot.deleted
-        );
-
-        console.log(slotsForDay);
-
-        const timestamps = [];
-        filteredTimeSlots.forEach((slot) => {
-          const { startTime, endTime } = slot;
-          let currTime = startTime.toNumber();
-          while (currTime < endTime.toNumber()) {
-            timestamps.push(currTime);
-            new Date(currTime).setMinutes(new Date(currTime).getMinutes() + 10);
-          }
-        });
-        console.log(timestamps)
-        setBlockedStamps(timestamps);
-        setShow(true)
-
-     })
-    };
-
-    fetchTimeSlots();
-  }, [day]);
+  getSlots(day)
+    .then(() => {
+      setShow(true);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}, [day]);
 
 
+useEffect(() => {
+  if (!slotsForDay.length) {
+    setShow(true);
+    return;
+  }
+
+  const filteredTimeSlots = slotsForDay.filter((slot) => !slot.deleted);
+
+  const timestamps = [];
+  filteredTimeSlots.forEach((slot) => {
+    const { startTime, endTime } = slot;
+    let currTime = new Date(startTime);
+    while (currTime < endTime) {
+      timestamps.push(currTime.getTime());
+      currTime.setMinutes(currTime.getMinutes() + 10);
+    }
+  });
+
+  setBlockedStamps(timestamps);
+  setShow(true);
+}, [slotsForDay]);
 
 
    const handleSubmit = async (e) => {
@@ -201,7 +202,7 @@ const AddSlot = () => {
                   showTimeSelectOnly
                   minTime={getStartUpDayTimestamp()}
                   maxTime={getEndOfDayTimestamp()}
-                  filterTime={(time) => filterListedTime(time, day)}
+                  filterTime={(time) => filterListedTime(time, day, blockedStamps)}
                   timeCaption="Start Time"
                   timeIntervals={timeInterval}
                   dateFormat="h:mm aa"
@@ -219,7 +220,7 @@ const AddSlot = () => {
                   showTimeSelectOnly
                   timeFormat="p"
                   timeIntervals={timeInterval}
-                  filterTime={filterListedTime}
+                  filterTime={(time) => filterListedTime(time, day, blockedStamps)}
                   minTime={getTimestamp(startTime)}
                   maxTime={getEndOfDayTimestamp()}
                   timeCaption="End Time"
@@ -265,7 +266,6 @@ const AddSlot = () => {
               >
                 Submit
               </button>
-              {console.log(blockedStamps)}
             </>
           ) : null}
         </form>
@@ -275,54 +275,3 @@ const AddSlot = () => {
 }
 
 export default AddSlot
-
-
-//     import "./styles.css";
-// import DatePicker from "react-datepicker";
-// import { useState } from 'react'
-
-// export default function App() {
-//   const [selectedDate,setSelectedDate] = useState(null)
-//   const [selectDate,setSelectDate] = useState(null)
-
-//   const handleSelectedDate = () => {
-//     const date = new Date(selectedDate)
-//     const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
-//     console.log(new Date(`${date.toLocaleDateString('en-US', options).replace(/\//g, '-')}`).getTime())
-//   }
-
-//   const handleSelectDate = () => {
-//     const date = new Date(selectDate)
-//     const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
-//     console.log(new Date(`${date.toLocaleDateString('en-US', options).replace(/\//g, '-')}`).getTime())
-//   }
-
-//   return (
-//     <div>
-//       <DatePicker
-//       selected={selectedDate}
-//       onChange={(date) => setSelectedDate(date)}
-//       dateFormat="dd/MM/yyyy"
-//       minDate={Date.now()}
-//       />
-//       <br/>
-//       <br/>
-//       <button onClick={handleSelectedDate}>Logout timestamp</button>
-
-//       <br/>
-//       <br/>
-//       <br/>
-//       <br/>
-
-//       <DatePicker
-//       selected={selectDate}
-//       onChange={(date) => setSelectDate(date)}
-//       dateFormat="dd/MM/yyyy"
-//       minDate={Date.now()}
-//       />
-//       <br/>
-//       <br/>
-//       <button onClick={handleSelectDate}>Logout timestamp</button>
-//     </div>
-//   );
-// }
