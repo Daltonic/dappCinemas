@@ -11,101 +11,105 @@ import {
 import { toast } from 'react-toastify'
 
 const AddSlot = () => {
-  const [addSlotModal] = useGlobalState('addSlotModal')
-  const [singleMovie] = useGlobalState('singleMovie')
+  const [addSlotModal] = useGlobalState("addSlotModal");
+  const [singleMovie] = useGlobalState("singleMovie");
   const [slotsForDay] = useGlobalState("slotsForDay");
 
-  const [ticketPrice,setTicketPrice] = useState('')
+  const [ticketPrice, setTicketPrice] = useState("");
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
-  const [capacity, setCapacity] = useState('');
+  const [capacity, setCapacity] = useState("");
   const [day, setDay] = useState(null);
-  const [blockedStamps,setBlockedStamps] = useState([])
-  const [show,setShow] = useState(false)
+  const [blockedStamps, setBlockedStamps] = useState([]);
+  const [show, setShow] = useState(false);
 
-  const timeInterval = 10
+  const timeInterval = 10;
+
   
-
-
-  const getEndOfDayTimestamp = () => {
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 0, 0);
-    return endOfDay.getTime();
-  };
-
-  const getStartUpDayTimestamp = () => {
-    const endOfDay = new Date();
-    endOfDay.setHours(6, 0, 0, 0);
-    return endOfDay.getTime();
-  };
-
-  const getTimestamp = (existingTime, min = 10) => {
-    const timeSlotDiff = new Date(existingTime);
-    timeSlotDiff.setMinutes(timeSlotDiff.getMinutes() + min);
-    return timeSlotDiff.getTime();
-  };
-
 
   const handleSelectedDay = (date) => {
     const day = new Date(date);
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
-    setDay(
-      new Date(
-        `${day.toLocaleDateString("en-US", options).replace(/\//g, "-")}`
-      ).getTime()
-    ); 
-  }
-
-
-
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    const newDate = new Date(
+      `${day.toLocaleDateString("en-US", options).replace(/\//g, "-")}`
+    ).getTime();
+    setDay(newDate);
+    const startOfDay = new Date(day);
+    startOfDay.setHours(0, 0, 0, 0);
+    if (startOfDay.toLocaleDateString() === new Date().toLocaleDateString()) {
+      setStartTime(new Date());
+      setEndTime(new Date());
+    } else {
+      setStartTime(new Date(day));
+      setEndTime(new Date(day));
+    }
+  };
 
   const handleClose = () => {
     setGlobalState("addSlotModal", "scale-0");
   };
 
-  
-useEffect(() => {
-  if (!day) return
+ // Get the start of the selected day
+const startOfDay = new Date(day);
+startOfDay.setHours(0, 0, 0, 0);
 
-  getSlots(day)
-    .then(() => {
-      setShow(false);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-}, [day]);
+// Get the minimum time for the start time picker
+const minStartTime =
+  startOfDay.toLocaleDateString() === new Date().toLocaleDateString()
+    ? new Date()
+    : startOfDay;
 
-useEffect(() => {
-  if (!slotsForDay.length) {
-    setShow(true);
-    setBlockedStamps([]);
-    return;
-  }
+// Calculate the maximum time for the start time picker
+const maxStartTime = new Date(day).setHours(23, 59, 59, 999);
 
-  // Check if there are slots available for the selected day
-  const slotsAvailable = slotsForDay.some((slot) => !slot.deleted);
+// Calculate the minimum time for the end time picker
+const minEndTime = new Date(startTime);
 
-  if (slotsAvailable) {
-    const filteredTimeSlots = slotsForDay.filter((slot) => !slot.deleted);
+// Calculate the maximum time for the end time picker
+const maxEndTime = new Date(day).setHours(23, 59, 59, 999);
 
-    const timestamps = [];
-    filteredTimeSlots.forEach((slot) => {
-      const { startTime, endTime } = slot;
-      let currTime = new Date(startTime);
-      while (currTime < endTime) {
-        timestamps.push(currTime.getTime());
-        currTime.setMinutes(currTime.getMinutes() + 10);
-      }
-    });
 
-    setBlockedStamps(timestamps);
-    setShow(true);
-  } else {
-    setShow(true);
-  }
-}, [slotsForDay]);
+  useEffect(() => {
+    if (!day) return;
 
+    getSlots(day)
+      .then(() => {
+        setShow(false);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [day]);
+
+  useEffect(() => {
+    if (!slotsForDay.length) {
+      setShow(true);
+      setBlockedStamps([]);
+      return;
+    }
+
+    // Check if there are slots available for the selected day
+    const slotsAvailable = slotsForDay.some((slot) => !slot.deleted);
+
+    if (slotsAvailable) {
+      const filteredTimeSlots = slotsForDay.filter((slot) => !slot.deleted);
+
+      const timestamps = [];
+      filteredTimeSlots.forEach((slot) => {
+        const { startTime, endTime } = slot;
+        let currTime = new Date(startTime);
+        while (currTime < endTime) {
+          timestamps.push(currTime.getTime());
+          currTime.setMinutes(currTime.getMinutes() + 10);
+        }
+      });
+
+      setBlockedStamps(timestamps);
+      setShow(true);
+    } else {
+      setShow(true);
+    }
+  }, [slotsForDay]);
 
    const handleSubmit = async (e) => {
      e.preventDefault();
@@ -119,15 +123,13 @@ useEffect(() => {
        day,
      };
 
-     console.log(params)
-
      await toast.promise(
         new Promise(async (resolve, reject) => {
           await addSlot(params)
             .then(async () => {
               resetForm();
               handleClose()
-              getSlots(day);
+              await getSlots(day);
               resolve();
             })
             .catch(() => reject());
@@ -138,19 +140,19 @@ useEffect(() => {
           error: "Encountered error 🤯",
         }
       );
+
    };
 
-   const resetForm = ()=> {
-    setDay(null)
-    setStartTime(null)
-    setEndTime(null)
-    setTicketPrice('')
-    setCapacity('')
-    setShow(false)
-   }
 
-  
-  
+  const resetForm = () => {
+    setDay(null);
+    setStartTime(null);
+    setEndTime(null);
+    setTicketPrice("");
+    setCapacity("");
+    setShow(false);
+  };
+
   return (
     <div
       className={`fixed top-0 left-0 w-screen h-screen flex items-center justify-center
@@ -196,11 +198,13 @@ useEffect(() => {
               <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
                 <DatePicker
                   selected={startTime}
-                  onChange={(date) => setStartTime(date)}
+                  onChange={setStartTime}
                   showTimeSelect
                   showTimeSelectOnly
-                  minTime={getStartUpDayTimestamp()}
-                  maxTime={getEndOfDayTimestamp()}
+                  minDate={new Date(day)}
+                  maxDate={new Date(day)}
+                  minTime={minStartTime}
+                  maxTime={maxStartTime}
                   timeCaption="Start Time"
                   excludeTimes={blockedStamps}
                   timeIntervals={timeInterval}
@@ -214,14 +218,16 @@ useEffect(() => {
               <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
                 <DatePicker
                   selected={endTime}
-                  onChange={(date) => setEndTime(date)}
+                  onChange={setEndTime}
                   showTimeSelect
                   showTimeSelectOnly
                   timeFormat="p"
                   timeIntervals={timeInterval}
                   excludeTimes={blockedStamps}
-                  minTime={getTimestamp(startTime)}
-                  maxTime={getEndOfDayTimestamp()}
+                  minDate={new Date(day)}
+                  maxDate={new Date(day)}
+                  minTime={minEndTime}
+                  maxTime={maxEndTime}
                   timeCaption="End Time"
                   dateFormat="h:mm aa"
                   placeholderText="Select end time..."
