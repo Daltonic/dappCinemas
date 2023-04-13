@@ -3,11 +3,19 @@ import AntMan from '../asset/emancipation.jpg'
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import { getMovies } from '../services/Blockchain.services';
+import PublishIcon from "@mui/icons-material/Publish";
+import {
+  getMovies,
+  movieSlots,
+  publishTimeSlot,
+  deleteSlot,
+} from "../services/Blockchain.services";
 import { useGlobalState, setGlobalState } from '../store';
 import UpdateMovie from '../components/UpdateMovie';
 import DeleteMovie from '../components/DeleteMovie';
 import AddSlot from '../components/AddSlot';
+import moment from 'moment'
+import { toast } from 'react-toastify'
 
 const ManageMovies = () => {
   const [loaded,setLoaded] = useState(false)
@@ -16,6 +24,7 @@ const ManageMovies = () => {
 
   useEffect(async()=>{
     await getMovies().then(()=>setLoaded(true))
+    
   },[])
 
   
@@ -48,6 +57,18 @@ const ManageMovies = () => {
 export default ManageMovies
 
 const MovieWithDetails = ({movie})=> {
+  const [slotsForMovie] = useGlobalState("slotsForMovie");
+
+  function convertTimestampToTime(timestamp) {
+    return moment(timestamp).format("h:mm A");
+  }
+  function formatDateWithDayName(timestamp) {
+    return moment(timestamp).format("dddd, MMMM Do YYYY");
+  }
+
+  useEffect(async () => {
+    await movieSlots(movie.id);
+  }, [slotsForMovie]);
 
   const handleOpenUpdateMovie = () => {
     setGlobalState("singleMovie", movie);
@@ -62,6 +83,48 @@ const MovieWithDetails = ({movie})=> {
   const handleOpenAddSlotMovie = () => {
     setGlobalState("singleMovie", movie);
     setGlobalState("addSlotModal", "scale-100");
+  }
+
+  const handlePublish = async (id,day)=> {
+    const params = {
+      id,
+      movieId: movie.id,
+      day
+    }
+      await toast.promise(
+        new Promise(async (resolve, reject) => {
+          await publishTimeSlot(params)
+            .then(async () => {
+              resolve();
+            })
+            .catch(() => reject());
+        }),
+        {
+          pending: "Approve transaction...",
+          success: "slot published successfully 👌",
+          error: "Encountered error 🤯",
+        }
+      );
+  }
+  const handleDelete = async (id)=> {
+    const params = {
+      id,
+      movieId: movie.id
+    }
+      await toast.promise(
+        new Promise(async (resolve, reject) => {
+          await deleteSlot(params)
+            .then(async () => {
+              resolve();
+            })
+            .catch(() => reject());
+        }),
+        {
+          pending: "Approve transaction...",
+          success: "slot deleted successfully 👌",
+          error: "Encountered error 🤯",
+        }
+      );
   }
 
     return (
@@ -109,6 +172,42 @@ const MovieWithDetails = ({movie})=> {
               </button>
             </div>
           </div>
+        </div>
+        <div className="px-3">
+          {slotsForMovie.length > 0 ? (
+            <>
+              <h1 className="text-xl font-bold mx-4">Slots</h1>
+              {slotsForMovie.map((slot, i) =>
+                !slot.deleted ? (
+                  <div className="my-4 px-4" key={i}>
+                    <h3 className="text-gray-700">
+                      {formatDateWithDayName(slot.day)}
+                    </h3>
+                    <div className="flex space-x-2 items-center">
+                      <h4>{convertTimestampToTime(slot.startTime)}</h4>
+                      <div className="w-3 h-[0.3px] bg-black"></div>
+                      <h4>{convertTimestampToTime(slot.endTime)}</h4>
+                    </div>
+
+                    <div className="flex items-center space-x-2 my-2">
+                      <DeleteIcon
+                        className="text-red-700 cursor-pointer"
+                        onClick={() => handleDelete(slot.id)}
+                      />
+                      {!slot.published ? (
+                        <PublishIcon
+                          className="text-cyan-600 cursor-pointer text-2xl"
+                          onClick={() => handlePublish(slot.id, slot.day)}
+                        />
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null
+              )}
+            </>
+          ) : (
+            "No slots available"
+          )}
         </div>
       </div>
     );

@@ -129,14 +129,14 @@ const addSlot = async ({
   }
 };
 
-const deleteSlot = async ({ id, day, movieId }) => {
+const deleteSlot = async ({ id, movieId }) => {
   try {
     if (!ethereum) return alert("Please install metamask");
 
     const connectedAccount = getGlobalState("connectedAccount");
     const contract = await getEthereumContract();
 
-    tx = contract.deleteSlot(id, day, movieId, {
+    tx = await contract.deleteSlot(id,  movieId, {
       from: connectedAccount,
     });
     await tx.wait();
@@ -145,13 +145,13 @@ const deleteSlot = async ({ id, day, movieId }) => {
   }
 };
 
-const publishTimeSlot = async ({ id, movieId }) => {
+const publishTimeSlot = async ({ id, movieId, day }) => {
   try {
     if (!ethereum) return alert("Please install metamask");
 
     const connectedAccount = getGlobalState("connectedAccount");
     const contract = await getEthereumContract();
-    tx = await contract.publishTimeSlot(id, movieId, {
+    tx = await contract.publishTimeSlot(id, movieId, day,{
       from: connectedAccount,
     });
     await tx.wait();
@@ -239,7 +239,7 @@ const movieSlots = async (movieId) => {
     if (!ethereum) return alert("Please install metamask");
     const contract = await getEthereumContract();
     const slots = await contract.getSlotsForMovie(movieId);
-    setGlobalState("movieSlots", structuredTimeslot(slots));
+    setGlobalState("slotsForMovie", structuredTimeslot(slots));
   } catch (err) {
     reportError(err);
   }
@@ -271,7 +271,7 @@ const structuredTimeslot = (slots) =>
   slots.map((slot) => ({
     id: Number(slot.id),
     movieId: Number(slot.movieId),
-    ticketCost: Number(slot.ticketCost),
+    ticketCost: parseInt(slot.ticketCost._hex) / 10 ** 18,
     startTime: slot.startTime.toNumber(),
     endTime: slot.endTime.toNumber(),
     capacity: Number(slot.capacity),

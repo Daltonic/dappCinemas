@@ -1,20 +1,20 @@
 import { createGlobalState } from "react-hooks-global-state";
 
 const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
-  movies:[],
-  movie:null,
-  singleMovie:null,
-  slotsForDay:[],
-  movieSlots:[],
-  ticketHolders:[],
-  movieToTicketHolderStatus:null,
-  connectedAccount: '',
+  movies: [],
+  movie: null,
+  singleMovie: null,
+  slotsForDay: [],
+  slotsForMovie: [],
+  ticketHolders: [],
+  movieToTicketHolderStatus: null,
+  connectedAccount: "",
   contract: null,
   messages: [],
-  deployer:null,
-  updateMovieModal: 'scale-0',
-  deleteMovieModal: 'scale-0',
-  addSlotModal: 'scale-0'
+  deployer: null,
+  updateMovieModal: "scale-0",
+  deleteMovieModal: "scale-0",
+  addSlotModal: "scale-0",
 });
 
 const truncate = (text, startChars, endChars, maxLength) => {
