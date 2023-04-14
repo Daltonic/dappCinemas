@@ -4,11 +4,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import PublishIcon from "@mui/icons-material/Publish";
+import AssignmentTurnedIn  from '@mui/icons-material/AssignmentTurnedIn';
 import {
   getMovies,
   movieSlots,
   publishTimeSlot,
   deleteSlot,
+  withdraw
 } from "../services/Blockchain.services";
 import { useGlobalState, setGlobalState } from '../store';
 import UpdateMovie from '../components/UpdateMovie';
@@ -58,6 +60,8 @@ export default ManageMovies
 
 const MovieWithDetails = ({movie})=> {
   const [slotsForMovie] = useGlobalState("slotsForMovie");
+  const [filteredSlots, setFilteredSlots] = useState([]);
+  
 
   function convertTimestampToTime(timestamp) {
     return moment(timestamp).format("h:mm A");
@@ -68,6 +72,11 @@ const MovieWithDetails = ({movie})=> {
 
   useEffect(async () => {
     await movieSlots(movie.id);
+  }, [slotsForMovie]);
+
+  useEffect(() => {
+    const filteredTimeSlots = slotsForMovie.filter((slot) => !slot.deleted);
+    setFilteredSlots(filteredTimeSlots);
   }, [slotsForMovie]);
 
   const handleOpenUpdateMovie = () => {
@@ -127,6 +136,27 @@ const MovieWithDetails = ({movie})=> {
       );
   }
 
+  const handleClaim = async (id)=> {
+    const params = {
+      id,
+      movieId: movie.id,
+    };
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await withdraw(params)
+          .then(async () => {
+            resolve();
+          })
+          .catch(() => reject());
+      }),
+      {
+        pending: "Approve transaction...",
+        success: "funds claimed successfully 👌",
+        error: "Encountered error 🤯",
+      }
+    );
+  }
+
     return (
       <div className="w-5/6 border-2 border-gray-300 shadow-lg rounded-lg my-5">
         <div className="flex">
@@ -137,6 +167,7 @@ const MovieWithDetails = ({movie})=> {
               className="w-full rounded-lg object-cover h-64"
             />
           </div>
+
           <div className="w-1/2 p-4">
             <h3 className="text-xl font-bold">{movie.name}</h3>
             <div className="flex space-x-2 my-2">
@@ -174,36 +205,50 @@ const MovieWithDetails = ({movie})=> {
           </div>
         </div>
         <div className="px-3">
-          {slotsForMovie.length > 0 ? (
+          {filteredSlots.length > 0 ? (
             <>
               <h1 className="text-xl font-bold mx-4">Slots</h1>
-              {slotsForMovie.map((slot, i) =>
-                !slot.deleted ? (
-                  <div className="my-4 px-4" key={i}>
-                    <h3 className="text-gray-700">
-                      {formatDateWithDayName(slot.day)}
-                    </h3>
-                    <div className="flex space-x-2 items-center">
-                      <h4>{convertTimestampToTime(slot.startTime)}</h4>
-                      <div className="w-3 h-[0.3px] bg-black"></div>
-                      <h4>{convertTimestampToTime(slot.endTime)}</h4>
-                    </div>
-
-                    <div className="flex items-center space-x-2 my-2">
-                      <DeleteIcon
-                        className="text-red-700 cursor-pointer"
-                        onClick={() => handleDelete(slot.id)}
-                      />
-                      {!slot.published ? (
-                        <PublishIcon
-                          className="text-cyan-600 cursor-pointer text-2xl"
-                          onClick={() => handlePublish(slot.id, slot.day)}
-                        />
-                      ) : null}
-                    </div>
+              {filteredSlots.map((slot, i) => (
+                <div className="my-4 px-4" key={i}>
+                  <h3 className="text-gray-700">
+                    {formatDateWithDayName(slot.day)}
+                  </h3>
+                  <div className="flex space-x-2 items-center">
+                    <h4>{convertTimestampToTime(slot.startTime)}</h4>
+                    <div className="w-3 h-[0.3px] bg-black"></div>
+                    <h4>{convertTimestampToTime(slot.endTime)}</h4>
                   </div>
-                ) : null
-              )}
+
+                  <div className="flex items-center space-x-2 my-2">
+                    <button
+                      className="py-1 px-2 border-[1px] border-gray-300 rounded-md"
+                      onClick={() => handleDelete(slot.id)}
+                    >
+                      <DeleteIcon className="text-red-700 cursor-pointer" />{" "}
+                      delete
+                    </button>
+                    {!slot.published ? (
+                      <button
+                        className="py-1 px-2 border-[1px] border-gray-300 rounded-md"
+                        onClick={() => handlePublish(slot.id, slot.day)}
+                      >
+                        <PublishIcon className="text-cyan-600 cursor-pointer text-2xl" />{" "}
+                        publish
+                      </button>
+                    ) : null}
+
+                    {new Date().getTime() > new Date(slot.endTime).getTime() &&
+                    slot.seating > 0 ? (
+                      <button
+                        className="py-1 px-2 border-[1px] border-gray-300 rounded-md"
+                        onClick={() => handleClaim(slot.id)}
+                      >
+                        <AssignmentTurnedIn className="text-green-500" /> claim
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
             </>
           ) : (
             "No slots available"

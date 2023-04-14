@@ -108,7 +108,9 @@ const MovieDetailsPage = () => {
                       <sub>spaces</sub>
                     </div>
                     <div>
-                      {slot.seatings <= slot.capacity ? (
+                      {slot.seatings >= slot.capacity ? (
+                        <button className="bg-transparent border-2 border-black text-gray-600 font-bold px-4 py-1">Filled up</button>
+                      ) : (
                         <button
                           className="bg-black py-1 px-4 text-xs font-bold text-white border-2 border-black hover:bg-transparent  rounded-full hover:border-2 hover:border-red-600 hover:text-black "
                           onClick={() =>
@@ -117,8 +119,6 @@ const MovieDetailsPage = () => {
                         >
                           BUY TICKET
                         </button>
-                      ) : (
-                        <button className="bg-transparent border-2 border-black text-gray-600 font-bold">Filled up</button>
                       )}
                     </div>
                   </div>

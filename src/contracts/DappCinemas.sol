@@ -155,7 +155,7 @@ contract DappCinemas is Ownable {
         timeslot.day = day;
         timeslot.capacity = capacity;
 
-        timeslotExists[slotsOf[day].length] = true;
+        timeslotExists[movieSlotsOf[movieId].length] = true;
         movieSlotsOf[movieId].push(timeslot);
         slotsOf[day].push(movieSlotsOf[movieId][timeslot.id]);
     }
@@ -251,6 +251,18 @@ contract DappCinemas is Ownable {
     function getTicketHolders(uint movieId, uint day) public view returns(TicketStruct[] memory) {
         return ticketsOf[movieId][day];
     }
+
+    function withdraw(uint256 movieId, uint256 id) public onlyOwner {
+        require(movieSlotsOf[movieId][id].published, "Time slot doesn't exist");
+        require(currentTime() > movieSlotsOf[movieId][id].endTime, "Movie has not ended yet");
+        
+        uint256 amount = movieSlotsOf[movieId][id].ticketCost * movieSlotsOf[movieId][id].seatings;
+        require(amount > 0, "No money to withdraw");
+
+        movieSlotsOf[movieId][id].seatings = 0;
+        payTo(owner(),amount);
+    }
+
 
     function performRefund(uint256 movieId, uint256 day) internal {
         for (uint256 i = 0; i < ticketsOf[movieId][day].length; i++) {
