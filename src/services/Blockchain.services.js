@@ -176,6 +176,21 @@ const buyTicket = async ({ movieId, day, id, ticketCost }) => {
   }
 };
 
+const withdraw = async ({movieId,id})=> {
+   try{
+    if (!ethereum) return alert("Please install metamask");
+
+    const connectedAccount = getGlobalState("connectedAccount");
+    const contract = await getEthereumContract();
+    tx = await contract.withdraw(movieId,id,{
+      from: connectedAccount
+    })
+    await tx.wait()
+   }catch(err){
+     reportError(err)
+   }
+}
+
 const movieToTicketHolders = async (movieId) => {
   try {
     if (!ethereum) return alert("Please install metamask");
@@ -256,6 +271,8 @@ const getOwner = async () => {
   }
 };
 
+
+
 const structuredMovie = (movies) =>
   movies.map((movie) => ({
     id: Number(movie.id),
@@ -311,5 +328,5 @@ export {
   movieToTicketHolders,
   getTicketHolders,
   getOwner,
-  structuredTimeslot
+  withdraw
 };
