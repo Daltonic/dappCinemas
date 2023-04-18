@@ -244,7 +244,7 @@ contract DappCinemas is Ownable {
 
         slotsOf[day][id].seatings++;
         movieSlotsOf[movieId][id].seatings++;
-        ticketsOf[movieId][day].push(ticket);
+        ticketsOf[movieId][id].push(ticket);
         movieToTicketHolders[movieId] = true;
     }
 

@@ -212,7 +212,6 @@ const getMovies = async () => {
     const contract = await getEthereumContract();
     const movies = await contract.getMovies();
     setGlobalState("movies", structuredMovie(movies));
-    console.log(movies)
   } catch (err) {
     reportError(err);
   }
@@ -238,11 +237,11 @@ const getSlots = async (day) => {
   }
 };
 
-const getTicketHolders = async (movieId, day) => {
+const getTicketHolders = async (movieId, id) => {
   try {
     if (!ethereum) return alert("Please install metamask");
     const contract = await getEthereumContract();
-    const ticketHolders = await contract.getTicketHolders(movieId, day);
+    const ticketHolders = await contract.getTicketHolders(movieId, id);
     setGlobalState("ticketHolders", structuredTicket(ticketHolders));
   } catch (err) {
     reportError(err);
@@ -304,7 +303,7 @@ const structuredTicket = (tickets) =>
     movieId: Number(ticket.movieId),
     slotId: Number(ticket.slotId),
     owner: ticket.owner.toLowerCase(),
-    cost: Number(ticket.cost),
+    cost: parseInt(ticket.cost._hex) / 10 ** 18,
     timestamp: new Date(ticket.timestamp).getTime(),
     day: new Date(ticket.day).getTime(),
     refunded: ticket.refunded,

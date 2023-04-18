@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import MovieIcon from "@mui/icons-material/Movie";
 import ManagementIcon from "@mui/icons-material/Settings";
 import AddIcon from "@mui/icons-material/Add";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import PeopleIcon  from "@mui/icons-material/People";
 import { Link } from "react-router-dom";
 import { connectWallet } from "../services/Blockchain.services";
 import { truncate, useGlobalState } from "../store";
@@ -41,7 +41,8 @@ const Sidebar = ()=> {
                     <span className="ml-4 text-sm text-gray-700">Movies</span>
                   </Link>
                 </div>
-                {connectedAccount && connectedAccount == deployer?.toLowerCase() ? (
+                {connectedAccount &&
+                connectedAccount == deployer?.toLowerCase() ? (
                   <>
                     <div className="border-l-2 transparent hover:border-l-2 hover:border-red-400">
                       <Link
@@ -67,19 +68,7 @@ const Sidebar = ()=> {
                       </Link>
                     </div>
                   </>
-                ) : (
-                  <div className="border-l-2 transparent hover:border-l-2 hover:border-red-400">
-                    <Link
-                      to="/addmovies"
-                      className=" ml-8 cursor-pointer text-gray-600 hover:text-red-700"
-                    >
-                      <CalendarMonthIcon />
-                      <span className="ml-4 text-sm text-gray-700">
-                        Tickets purchased
-                      </span>
-                    </Link>
-                  </div>
-                )}
+                ) : null}
               </div>
             ) : null}
           </div>
