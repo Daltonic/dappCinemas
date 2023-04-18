@@ -14,6 +14,8 @@ const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   deployer: null,
   updateMovieModal: "scale-0",
   deleteMovieModal: "scale-0",
+  slotsModal: 'scale-0',
+  ticketsModal: 'scale-0',
   addSlotModal: "scale-0",
 });
 
