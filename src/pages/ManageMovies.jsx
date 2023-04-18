@@ -101,15 +101,15 @@ const MovieWithDetails = ({ movie }) => {
 
   return (
     <div className="w-5/6 shadow-md rounded-lg border-2 border-gray-300 my-5">
-      <div className="flex">
-        <div className="w-1/2 p-3">
+      <div className="flex lg:flex-row flex-col">
+        <div className="lg:w-1/2 p-3 w-full">
           <img
             src={movie.imageUrl}
             alt=""
             className="w-full rounded-lg object-cover h-64"
           />
         </div>
-        <div className="w-1/2 p-3">
+        <div className="lg:w-1/2 p-3 w-full">
           <h3 className="text-xl font-bold">{movie.name}</h3>
           <div className="flex space-x-2 my-2">
             {movie.genre.split(",").map((genre, i) => (
