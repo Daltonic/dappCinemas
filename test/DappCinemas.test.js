@@ -90,7 +90,7 @@ describe('Contracts',()=>{
       result = await contract.getSlot(id,0)
       expect(result.deleted).to.be.equal(false)
 
-      await contract.deleteSlot(0,day,id)
+      await contract.deleteSlot(0,id)
       result = await contract.getSlot(id,0)
       secondResult = await contract.getSlotForDay(0,day)
       expect(result.deleted).to.be.equal(true)
@@ -110,17 +110,17 @@ describe('Contracts',()=>{
     })
 
     it('should confirm publishing slots', async ()=> {
-       await contract.connect(deployer).publishTimeSlot(0,id)
+       await contract.connect(deployer).publishTimeSlot(0,id,day)
        result = await contract.getSlot(id,0)
        expect(result.published).to.be.equal(true)
     })
 
     it('should confirm ticket buying', async ()=> {
-        await contract.connect(deployer).publishTimeSlot(0,id)
+        await contract.connect(deployer).publishTimeSlot(0,id,day)
         await contract.connect(buyer1).buyTicket(id,day,0,{
           value: ticketCost
         })
-        result = await contract.getTicketHolders(id,day)
+        result = await contract.getTicketHolders(id,0)
         expect(result).to.have.lengthOf(1)
     })
 

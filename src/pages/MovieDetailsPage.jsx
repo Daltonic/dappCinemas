@@ -1,24 +1,53 @@
 import {useEffect, useState} from "react";
 import Emancipation from "../asset/emancipation.jpg";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import { getMovie, movieSlots, buyTicket } from "../services/Blockchain.services";
-import { useGlobalState } from "../store";
+import { getMovie, movieSlots, buyTicket, getOwner } from "../services/Blockchain.services";
+import { setGlobalState, useGlobalState } from "../store";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import { toast } from 'react-toastify'
+import ChatIcon from "@mui/icons-material/Chat";
+import ChatCommand from "../components/ChatCommand";
+import AuthChat from "../components/AuthChat";
+import ChatModal from "../components/ChatModal";
+import { getGroup } from "../services/Chat";
 
 const MovieDetailsPage = () => {
   const [loaded,setLoaded] = useState(false)
   const [movie] = useGlobalState('movie')
   const [slotsForMovie] = useGlobalState('slotsForMovie')
+  const [group] = useGlobalState('group')
+  const [currentUser] = useGlobalState("currentUser");
+  const [connectedAccount] = useGlobalState("connectedAccount");
   const [filteredSlots,setFilteredSlots] = useState([])
   const { id } = useParams()
+  const [isOnline, setIsOnline] = useState(false);
 
   useEffect(async()=>{
+    
     await getMovie(id).then(async ()=>{
       await movieSlots(id).then(()=>setLoaded(true))
     })
+    await getGroup(`guid_${id}`).then((Group) => {
+      setGlobalState("group", Group);
+    });
   },[])
+
+
+  useEffect(()=>{
+    setIsOnline(currentUser?.uid.toLowerCase() == connectedAccount);
+  },[currentUser])
+
+  const handleChat = () => {
+    if (isOnline && (!group || !group.hasJoined)) {
+      setGlobalState("chatCommandModal", "scale-100");
+    } else if (isOnline && group && group.hasJoined) {
+      setGlobalState("chatModal", "scale-100");
+    } else{
+      setGlobalState("authChatModal", "scale-100");
+      alert(currentUser?.uid.toLowerCase() + connectedAccount)
+    }
+  };
 
   useEffect(() => {
       const filteredTimeSlots = slotsForMovie.filter(
@@ -61,7 +90,6 @@ const MovieDetailsPage = () => {
 
   return loaded ? (
     <div className="flex flex-col w-full p-4 space-y-4">
-      {console.log(slotsForMovie)}
       <div className="flex w-full ">
         <img src={movie.imageUrl} className="w-full object-cover h-[30rem]" />
       </div>
@@ -81,7 +109,14 @@ const MovieDetailsPage = () => {
           <p className="text-gray-700 my-5 w-3/6 text-center mx-auto font-semibold">
             {movie.description}
           </p>
+          <button
+            className="border-2 border-gray-300 flex items-center space-x-3 p-1 rounded-md cursor-pointer mx-auto"
+            onClick={handleChat}
+          >
+            <ChatIcon /> &nbsp; Chats
+          </button>
         </div>
+
         {filteredSlots.length > 0
           ? filteredSlots.map((slot, i) => (
               <>
@@ -109,7 +144,9 @@ const MovieDetailsPage = () => {
                     </div>
                     <div>
                       {slot.seatings >= slot.capacity ? (
-                        <button className="bg-transparent border-2 border-black text-gray-600 font-bold px-4 py-1">Filled up</button>
+                        <button className="bg-transparent border-2 border-black text-gray-600 font-bold px-4 py-1">
+                          Filled up
+                        </button>
                       ) : (
                         <button
                           className="bg-black py-1 px-4 text-xs font-bold text-white border-2 border-black hover:bg-transparent  rounded-full hover:border-2 hover:border-red-600 hover:text-black "
@@ -126,33 +163,10 @@ const MovieDetailsPage = () => {
               </>
             ))
           : "No slots yet"}
-
-        {/* <div className="flex align-center items-center justify-center mb-2">
-          <h4 className="font-black text-2xl">Recent Bookings</h4>
-        </div> */}
-        {/* <div className="grid grid-cols-1  gap-4 p-2">
-          <div className="flex flex-col bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
-            <div className="flex flex-col space-y-4 align-center items-center justify-center  md:flex-row align-center  space-x-4 ">
-              <p>0xe23....12df</p>
-              <p>11:30AM - 1:30PM</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
-            <div className="flex space-x-4 justify-center p-2">
-              <p>0xe23....12df</p>
-              <p>11:30AM - 1:30PM</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col bg-gray-300 rounded-md p-2  m-auto w-full md: 4/5 md:w-2/3">
-            <div className="flex space-x-4 justify-center p-2">
-              <p>0xe23....12df</p>
-              <p>11:30AM - 1:30PM</p>
-            </div>
-          </div>
-        </div> */}
       </div>
+      <ChatCommand movie={movie} />
+      <AuthChat />
+      <ChatModal />
     </div>
   ) : null;
 }

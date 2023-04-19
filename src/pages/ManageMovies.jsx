@@ -6,6 +6,7 @@ import PublishIcon from "@mui/icons-material/Publish";
 import AssignmentTurnedIn from "@mui/icons-material/AssignmentTurnedIn";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PeopleIcon  from "@mui/icons-material/People";
+import ChatIcon from "@mui/icons-material/Chat";
 import {
   getMovies,
   movieSlots,
@@ -13,6 +14,7 @@ import {
   deleteSlot,
   withdraw,
   getTicketHolders,
+  movieToTicketHolders,
 } from "../services/Blockchain.services";
 import { useGlobalState, setGlobalState, truncate } from "../store";
 import UpdateMovie from "../components/UpdateMovie";
@@ -27,7 +29,6 @@ const ManageMovies = () => {
   const [loaded, setLoaded] = useState(false);
   const [movies] = useGlobalState("movies");
   const [singleMovie] = useGlobalState("singleMovie");
-
   useEffect(async () => {
     await getMovies().then(() => setLoaded(true));
   }, []);
@@ -62,11 +63,15 @@ export default ManageMovies;
 const MovieWithDetails = ({ movie }) => {
   const [slotsForMovie] = useGlobalState("slotsForMovie");
   const [filteredSlots, setFilteredSlots] = useState([]);
+  const [movieToTicketHolderStatus] = useGlobalState(
+    "movieToTicketHolderStatus"
+  );
 
   
 
   useEffect(async () => {
     await movieSlots(movie.id);
+    await movieToTicketHolders()
   }, [slotsForMovie]);
 
   useEffect(() => {
@@ -123,19 +128,23 @@ const MovieWithDetails = ({ movie }) => {
           </div>
           <p className="my-3">{movie.description}</p>
           <div className="flex space-x-3 my-2 flex-wrap">
-            <button
-              className="border-2 border-gray-300 flex items-center space-x-3 p-1 rounded-md cursor-pointer text-sm"
-              onClick={handleOpenUpdateMovie}
-            >
-              <EditIcon className="text-cyan-700" /> Update
-            </button>
+            {!movieToTicketHolderStatus ? (
+              <>
+                <button
+                  className="border-2 border-gray-300 flex items-center space-x-3 p-1 rounded-md cursor-pointer text-sm"
+                  onClick={handleOpenUpdateMovie}
+                >
+                  <EditIcon className="text-cyan-700" /> Update
+                </button>
 
-            <button
-              className="border-2 border-gray-300 flex items-center space-x-3 p-1 rounded-md cursor-pointer text-sm"
-              onClick={handleOpenDeleteMovie}
-            >
-              <DeleteIcon className="text-red-700" /> Delete
-            </button>
+                <button
+                  className="border-2 border-gray-300 flex items-center space-x-3 p-1 rounded-md cursor-pointer text-sm"
+                  onClick={handleOpenDeleteMovie}
+                >
+                  <DeleteIcon className="text-red-700" /> Delete
+                </button>
+              </>
+            ) : null}
             <button
               className="border-2 border-gray-300 flex items-center space-x-3 p-1 rounded-md cursor-pointer text-sm"
               onClick={handleOpenAddSlotMovie}
@@ -155,7 +164,7 @@ const MovieWithDetails = ({ movie }) => {
               className="border-2 border-gray-300 flex items-center space-x-3 p-1 rounded-md cursor-pointer text-sm"
               onClick={handleOpenTicketsModal}
             >
-              <PeopleIcon className="text-gray-600" /> ticket buyers
+              <PeopleIcon className="text-gray-600" /> Ticket buyers
             </button>
           </div>
         </div>
