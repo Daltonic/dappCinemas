@@ -36,9 +36,13 @@ const isWalletConnected = async () => {
 
     window.ethereum.on("accountsChanged", async () => {
       setGlobalState("connectedAccount", accounts[0]);
-
+      
       await isWalletConnected().then(() => {
         window.location.reload();
+      })
+
+      await logOutWithCometChat().then(() => {
+       setGlobalState('currentUser', null)
       });
     });
     return accounts[0]
