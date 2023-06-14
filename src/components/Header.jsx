@@ -1,91 +1,68 @@
-import { React, useState } from "react";
-import { Link } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
-import TuneIcon from "@mui/icons-material/Tune";
-import VoiceChatIcon from "@mui/icons-material/VoiceChat";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
-import { Avatar } from "@mui/material";
+import { React, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { MdMenu } from 'react-icons/md'
+import { AiOutlineClose } from 'react-icons/ai'
+import { TbSearch } from 'react-icons/tb'
+import { truncate, useGlobalState } from '../store'
+import { connectWallet } from '../services/Blockchain.services'
 
-import Avatarimg from "../asset/Avatar.jpg";
+const Header = () => {
+  const [toggleMenu, setToggleMenu] = useState(false)
 
-const Header = () =>{
-  const [toggleMenu, setToggleMenu] = useState(false);
   return (
-    <div className="flex flex-col justify-start  p-2">
+    <div className="flex flex-col justify-start border-b border-gray-200 p-2">
       <div className="flex content-center items-center justify-between w-full">
         <div className="flex p-2 sm:hidden">
           <Link to="/">
-            dapp.<span className="text-red-500">Cinemas</span>
+            Dapp<span className="text-red-500">Cinemas</span>
           </Link>
         </div>
         <div className="flex space-x-4 p-1">
           <form>
-            <div className="hidden sm:flex border-2 text-gray-500 border-gray-300 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
-              <SearchIcon className="hidden md:flex" />
+            <div className="hidden sm:flex border border-gray-200 text-gray-500 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
+              <TbSearch size={20} className="hidden md:flex" />
               <input
                 placeholder="Search everything"
                 className="border-none flex-1 text-m px-2 outline-none"
               />
-              <TuneIcon />
             </div>
           </form>
         </div>
-        <div className="mr-4">
-          <div className="hidden md:flex items-center space-x-4">
-            <VoiceChatIcon />
-            <NotificationsNoneIcon />
-
-            <Avatar
-              alt="Remy Sharp"
-              src={Avatarimg}
-              sx={{ width: 42, height: 42 }}
-              className=" border-solid border-2 border-red-500 cursor-pointer "
-            />
-          </div>
-          <div className="hidden sm:flex md:hidden lg:hidden">
-            <Avatar
-              alt="Remy Sharp"
-              src={Avatarimg}
-              sx={{ width: 56, height: 56 }}
-              className=" border-solid border-2 border-red-500 cursor-pointer "
-            />
-          </div>
-        </div>
         <div className="flex m-4 sm:hidden">
           {toggleMenu ? (
-            <CloseIcon
+            <AiOutlineClose
+              size={20}
               onClick={() => setToggleMenu(false)}
               className="cursor-pointer"
             />
           ) : (
-            <MenuIcon
+            <MdMenu
+              size={30}
               onClick={() => setToggleMenu(true)}
               className="cursor-pointer"
             />
           )}
         </div>
       </div>
-      {toggleMenu ? <Menu /> : null}
-      <div style={{ borderBottom: "1px solid #B2BEB5" }} className="p-2"></div>
+      {toggleMenu && <Menu />}
     </div>
-  );
+  )
 }
-export default Header;
+export default Header
 
-const Menu = () => (
-  <>
-    <div className="flex flex-col justify-center w-full p-2 space-y-2 sm:hidden bounce-in-fwd">
+const Menu = () => {
+  const [connectedAccount] = useGlobalState('connectedAccount')
+
+  return (
+    <div className="flex flex-col justify-center w-full p-2 space-y-2 sm:hidden">
       <div className="flex space-x-4 p-2 justify-center w-full  shadow-md">
         <form>
-          <div className="flex border-2 text-gray-500 border-gray-300 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
-            <SearchIcon className="hidden md:flex" />
+          <div className="flex border border-gray-200 text-gray-500 p-2 items-center rounded-full min-w-[25vw] max-w-[560px]">
+            <TbSearch size={20} className="hidden md:flex" />
             <input
               placeholder="Search everything"
               className="border-none flex-1 text-m px-2 outline-none"
             />
-            <TuneIcon />
           </div>
         </form>
       </div>
@@ -104,19 +81,25 @@ const Menu = () => (
         >
           Watchlist
         </Link>
-        <Link
-          to=""
-          className="p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400"
-        >
-          Coming soon
-        </Link>
-        <Link
-          to=""
-          className="p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400"
-        >
-          Notification
-        </Link>
+        <div className="flex mt-4 list-none">
+          {connectedAccount ? (
+            <button
+              type="button"
+              className="inline-block px-8 py-2 border-2 border-red-600  text-xs leading-tight uppercase rounded-full focus:outline-none focus:ring-0 bg-gradient-to-r from-cyan-500 to-red-500 text-white font-bold"
+            >
+              {truncate(connectedAccount, 4, 4, 11)}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="inline-block px-6 py-2 border-2 border-red-600  font-medium text-xs leading-tight uppercase rounded-full hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out hover:bg-gradient-to-r from-cyan-500 to-red-500 hover:text-white hover:border-white"
+              onClick={connectWallet}
+            >
+              Connect Wallet
+            </button>
+          )}
+        </div>
       </div>
     </div>
-  </>
-);
+  )
+}
