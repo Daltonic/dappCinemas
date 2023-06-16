@@ -1,48 +1,48 @@
-import { FaTimes } from "react-icons/fa";
-import { setGlobalState, useGlobalState } from "../store";
-import Identicon from "react-identicons";
-import { truncate } from "../store";
-import { getMessages, sendMessage, listenForMessage } from "../services/Chat";
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { FaTimes } from 'react-icons/fa'
+import { setGlobalState, useGlobalState } from '../store'
+import Identicon from 'react-identicons'
+import { truncate } from '../store'
+import { getMessages, sendMessage, listenForMessage } from '../services/chat'
+import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 
 const ChatModal = () => {
-  const [chatModal] = useGlobalState("chatModal");
-  const [message, setMessage] = useState("");
-  const [messages] = useGlobalState("messages");
-  const { id } = useParams();
+  const [chatModal] = useGlobalState('chatModal')
+  const [message, setMessage] = useState('')
+  const [messages] = useGlobalState('messages')
+  const { id } = useParams()
 
   const onSendMessage = async (e) => {
-    e.preventDefault();
-    if (!message) return;
+    e.preventDefault()
+    if (!message) return
 
     new Promise(async (resolve, reject) => {
       await sendMessage(`guid_${id}`, message)
         .then((msg) => {
-          setGlobalState("messages", (prevMessages) => [...prevMessages, msg]);
-          setMessage("");
-          resolve(msg);
+          setGlobalState('messages', (prevMessages) => [...prevMessages, msg])
+          setMessage('')
+          resolve(msg)
         })
-        .catch(() => reject());
-    });
-  };
+        .catch(() => reject())
+    })
+  }
 
   useEffect(async () => {
     await getMessages(`guid_${id}`).then((msgs) => {
       if (msgs.length > 0) {
-        setGlobalState("messages", msgs);
+        setGlobalState('messages', msgs)
       } else {
-        console.log("empty");
+        console.log('empty')
       }
-    });
+    })
     await listenForMessage(`guid_${id}`).then((msg) => {
-      setGlobalState("messages", (prevMessages) => [...prevMessages, msg]);
-    });
-  }, []);
+      setGlobalState('messages', (prevMessages) => [...prevMessages, msg])
+    })
+  }, [])
 
   const handleClose = () => {
-    setGlobalState("chatModal", "scale-0");
-  };
+    setGlobalState('chatModal', 'scale-0')
+  }
 
   return (
     <div
@@ -80,8 +80,8 @@ const ChatModal = () => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Message = ({ message, uid }) => {
   return (
@@ -92,10 +92,10 @@ const Message = ({ message, uid }) => {
       </div>
       <p className="text-sm">{message}</p>
     </div>
-  );
-};
+  )
+}
 
-export default ChatModal;
+export default ChatModal
 
 {
   /* salt page unable inject planet clap blame legend wild blade wine casual */

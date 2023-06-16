@@ -1,40 +1,36 @@
-import {useState,useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import {
-  isWalletConnected
-} from "./services/Blockchain.services";
-import './App.css'
+import { isWalletConnected } from './services/blockchain'
 import Sidebar from './components/Sidebar'
 import Header from './components/Header'
-import Addmovie from './components/Addmovie'
-import Timeslot from './components/Timeslot'
+import Addmovie from './pages/Addmovie'
+import Timeslot from './pages/Timeslot'
 import BrowsePage from './pages/BrowsePage'
 import MovieDetailsPage from './pages/MovieDetailsPage'
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import ManageMovies from './pages/ManageMovies';
+import ManageMovies from './pages/ManageMovies'
+import { ToastContainer } from 'react-toastify'
 
 const App = () => {
-  const [loaded,setLoaded] = useState(false)
+  const [loaded, setLoaded] = useState(false)
 
-  useEffect(async ()=>{
-    await isWalletConnected().then(()=> setLoaded(true));
-  },[])
+  useEffect(async () => {
+    await isWalletConnected().then(() => setLoaded(true))
+  }, [])
 
   return (
     <div className="h-screen flex">
       <Sidebar />
       <div className="flex-1 overflow-auto">
         <Header />
-        {loaded ? (
+        {loaded && (
           <Routes>
             <Route path="/" element={<BrowsePage />} />
             <Route path="/moviedetails/:id" element={<MovieDetailsPage />} />
             <Route path="/addmovies" element={<Addmovie />} />
             <Route path="/timeslot" element={<Timeslot />} />
-            <Route path='/managemovies' element={<ManageMovies/>}/>
+            <Route path="/managemovies" element={<ManageMovies />} />
           </Routes>
-        ) : null}
+        )}
       </div>
       <ToastContainer
         position="bottom-center"
@@ -49,7 +45,7 @@ const App = () => {
         theme="dark"
       />
     </div>
-  );
+  )
 }
 
 export default App

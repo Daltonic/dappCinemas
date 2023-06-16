@@ -1,63 +1,63 @@
-import {useEffect, useState} from 'react'
-import { useGlobalState, setGlobalState} from '../store';
-import { FaTimes } from "react-icons/fa";
-import { updateMovie, getMovies } from '../services/Blockchain.services';
+import { useEffect, useState } from 'react'
+import { useGlobalState, setGlobalState } from '../store'
+import { FaTimes } from 'react-icons/fa'
+import { updateMovie, getMovies } from '../services/blockchain'
 import { toast } from 'react-toastify'
 
 const UpdateMovie = () => {
-    const [updateMovieModal] = useGlobalState("updateMovieModal");
-    const [singleMovie] = useGlobalState("singleMovie");
+  const [updateMovieModal] = useGlobalState('updateMovieModal')
+  const [singleMovie] = useGlobalState('singleMovie')
 
-    const [imageUrl,setImageUrl] = useState('')
-    const [name,setName] = useState('')
-    const [genre,setGenre] = useState('')
-    const [description,setDescription] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
+  const [name, setName] = useState('')
+  const [genre, setGenre] = useState('')
+  const [description, setDescription] = useState('')
 
-    useEffect(() => {
-      if (singleMovie) {
-        setImageUrl(singleMovie.imageUrl);
-        setName(singleMovie.name);
-        setGenre(singleMovie.genre);
-        setDescription(singleMovie.description);
-      }
-    }, [singleMovie]);
-
-    const handleClose = ()=> {
-        setGlobalState("updateMovieModal",'scale-0');
-        setImageUrl('')
-        setName('')
-        setGenre('')
-        setDescription('')
-        setGlobalState("singleMovie", null);
+  useEffect(() => {
+    if (singleMovie) {
+      setImageUrl(singleMovie.imageUrl)
+      setName(singleMovie.name)
+      setGenre(singleMovie.genre)
+      setDescription(singleMovie.description)
     }
+  }, [singleMovie])
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      if (!imageUrl || !name || !genre || !description) return;
-      const params = {
-        id: singleMovie.id,
-        name,
-        imageUrl,
-        genre,
-        description,
-      };
-      await toast.promise(
-        new Promise(async (resolve, reject) => {
-          await updateMovie(params)
-            .then(async () => {
-              handleClose();
-              await getMovies();
-              resolve();
-            })
-            .catch(() => reject());
-        }),
-        {
-          pending: "Approve transaction...",
-          success: "movie updated successfully 👌",
-          error: "Encountered error 🤯",
-        }
-      );
-    };
+  const handleClose = () => {
+    setGlobalState('updateMovieModal', 'scale-0')
+    setImageUrl('')
+    setName('')
+    setGenre('')
+    setDescription('')
+    setGlobalState('singleMovie', null)
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!imageUrl || !name || !genre || !description) return
+    const params = {
+      id: singleMovie.id,
+      name,
+      imageUrl,
+      genre,
+      description,
+    }
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await updateMovie(params)
+          .then(async () => {
+            handleClose()
+            await getMovies()
+            resolve()
+          })
+          .catch(() => reject())
+      }),
+      {
+        pending: 'Approve transaction...',
+        success: 'movie updated successfully 👌',
+        error: 'Encountered error 🤯',
+      }
+    )
+  }
 
   return (
     <div
@@ -79,7 +79,7 @@ const UpdateMovie = () => {
           <div className="flex flex-col justify-center items-center rounded-xl mt-5 mb-5">
             <div className="flex justify-center items-center rounded-full overflow-hidden h-10 w-64 shadow-md shadow-slate-300 p-4">
               <p className="text-slate-700">
-                {" "}
+                {' '}
                 Dapp <span className="text-red-700">Cinemas</span>
               </p>
             </div>
@@ -147,7 +147,7 @@ const UpdateMovie = () => {
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 export default UpdateMovie

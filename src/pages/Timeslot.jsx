@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 const Timeslot = () => {
   return (
@@ -13,23 +13,10 @@ const Timeslot = () => {
               <label>Start Time</label>
               <select
                 data-te-select-init
-                className="form-control block
-      w-full
-      mt-2
-       px-3
-      py-1.5
-      text-base
-      font-normal
-      text-gray-700
-      bg-white bg-clip-padding
-     
-      rounded-lg
-    outline-none
-    
-   lg:w-[400px] focus:border-red-700  focus:outline-none focus:ring-0"
-              >
-                
-              </select>
+                className="form-control block w-full mt-2 px-3 py-1.5 text-base font-normal
+                text-gray-700 bg-white bg-clip-padding rounded-lg outline-none 
+                lg:w-[400px] focus:border-red-700  focus:outline-none focus:ring-0"
+              ></select>
             </div>
           </div>
           <div className="flex justify-center">
@@ -37,20 +24,9 @@ const Timeslot = () => {
               <label>End Time</label>
               <select
                 data-te-select-init
-                className="form-control block
-      w-full
-      mt-2
-       px-3
-      py-1.5
-      text-base
-      font-normal
-      text-gray-700
-      bg-white bg-clip-padding
-     
-      rounded-lg
-    outline-none
-    
-   lg:w-[400px] focus:border-red-700  focus:outline-none focus:ring-0"
+                className="form-control block w-full mt-2 px-3 py-1.5 text-base font-normal
+                text-gray-700 bg-white bg-clip-padding rounded-lg outline-none
+                lg:w-[400px] focus:border-red-700  focus:outline-none focus:ring-0"
               >
                 {/* {data.EndTime.map((item) => (
                   <option key={item.id} value={item.id}>
@@ -82,27 +58,12 @@ const Timeslot = () => {
               </div>
             </div>
           </div>
-          <div
-            className="flex
-    justify-end "
-          >
+          <div className="flex justify-end ">
             <button
               type="submit"
-              className="
-    w-42
-    
-    px-6
-    py-2.5
-    bg-transparent
-    text-black
-    font-medium
-    text-xs
-    leading-tight
-    uppercase
-    rounded-full
-    shadow-md
-    border-2 border-red-700
-    hover:bg-gradient-to-r from-cyan-500 to-red-500 hover:text-white hover:border-white"
+              className=" w-42 px-6 py-2.5 bg-transparent text-black font-medium text-xs leading-tight
+              uppercase rounded-full shadow-md border-2 border-red-700
+              hover:bg-gradient-to-r from-cyan-500 to-red-500 hover:text-white hover:border-white"
             >
               Add to List
             </button>
@@ -110,7 +71,7 @@ const Timeslot = () => {
         </form>
       </div>
     </div>
-  );
+  )
 }
 
-export default Timeslot;
+export default Timeslot

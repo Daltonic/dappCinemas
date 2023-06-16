@@ -1,157 +1,148 @@
-import { useState,useEffect } from 'react'
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { FaTimes } from 'react-icons/fa';
-import { useGlobalState, setGlobalState } from '../store';
-import {
-  getSlots,
-  addSlot,
-  structuredTimeslot,
-} from "../services/Blockchain.services";
+import { useState, useEffect } from 'react'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import { FaTimes } from 'react-icons/fa'
+import { useGlobalState, setGlobalState } from '../store'
+import { getSlots, addSlot, structuredTimeslot } from '../services/blockchain'
 import { toast } from 'react-toastify'
 
 const AddSlot = () => {
-  const [addSlotModal] = useGlobalState("addSlotModal");
-  const [singleMovie] = useGlobalState("singleMovie");
-  const [slotsForDay] = useGlobalState("slotsForDay");
+  const [addSlotModal] = useGlobalState('addSlotModal')
+  const [singleMovie] = useGlobalState('singleMovie')
+  const [slotsForDay] = useGlobalState('slotsForDay')
 
-  const [ticketPrice, setTicketPrice] = useState("");
-  const [startTime, setStartTime] = useState(null);
-  const [endTime, setEndTime] = useState(null);
-  const [capacity, setCapacity] = useState("");
-  const [day, setDay] = useState(null);
-  const [blockedStamps, setBlockedStamps] = useState([]);
-  const [show, setShow] = useState(false);
+  const [ticketPrice, setTicketPrice] = useState('')
+  const [startTime, setStartTime] = useState(null)
+  const [endTime, setEndTime] = useState(null)
+  const [capacity, setCapacity] = useState('')
+  const [day, setDay] = useState(null)
+  const [blockedStamps, setBlockedStamps] = useState([])
+  const [show, setShow] = useState(false)
 
-  const timeInterval = 10;
-
-  
+  const timeInterval = 10
 
   const handleSelectedDay = (date) => {
-    const day = new Date(date);
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    const day = new Date(date)
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
     const newDate = new Date(
-      `${day.toLocaleDateString("en-US", options).replace(/\//g, "-")}`
-    ).getTime();
-    setDay(newDate);
-    const startOfDay = new Date(day);
-    startOfDay.setHours(0, 0, 0, 0);
+      `${day.toLocaleDateString('en-US', options).replace(/\//g, '-')}`
+    ).getTime()
+    setDay(newDate)
+    const startOfDay = new Date(day)
+    startOfDay.setHours(0, 0, 0, 0)
     if (startOfDay.toLocaleDateString() === new Date().toLocaleDateString()) {
-      setStartTime(new Date());
-      setEndTime(new Date());
+      setStartTime(new Date())
+      setEndTime(new Date())
     } else {
-      setStartTime(new Date(day));
-      setEndTime(new Date(day));
+      setStartTime(new Date(day))
+      setEndTime(new Date(day))
     }
-  };
+  }
 
   const handleClose = () => {
-    setGlobalState("addSlotModal", "scale-0");
-  };
+    setGlobalState('addSlotModal', 'scale-0')
+  }
 
- // Get the start of the selected day
-const startOfDay = new Date(day);
-startOfDay.setHours(0, 0, 0, 0);
+  // Get the start of the selected day
+  const startOfDay = new Date(day)
+  startOfDay.setHours(0, 0, 0, 0)
 
-// Get the minimum time for the start time picker
-const minStartTime =
-  startOfDay.toLocaleDateString() === new Date().toLocaleDateString()
-    ? new Date()
-    : startOfDay;
+  // Get the minimum time for the start time picker
+  const minStartTime =
+    startOfDay.toLocaleDateString() === new Date().toLocaleDateString()
+      ? new Date()
+      : startOfDay
 
-// Calculate the maximum time for the start time picker
-const maxStartTime = new Date(day).setHours(23, 59, 59, 999);
+  // Calculate the maximum time for the start time picker
+  const maxStartTime = new Date(day).setHours(23, 59, 59, 999)
 
-// Calculate the minimum time for the end time picker
-const minEndTime = new Date(startTime);
+  // Calculate the minimum time for the end time picker
+  const minEndTime = new Date(startTime)
 
-// Calculate the maximum time for the end time picker
-const maxEndTime = new Date(day).setHours(23, 59, 59, 999);
-
+  // Calculate the maximum time for the end time picker
+  const maxEndTime = new Date(day).setHours(23, 59, 59, 999)
 
   useEffect(() => {
-    if (!day) return;
+    if (!day) return
 
     getSlots(day)
       .then(() => {
-        setShow(false);
+        setShow(false)
       })
       .catch((error) => {
-        console.error(error);
-      });
-  }, [day]);
+        console.error(error)
+      })
+  }, [day])
 
   useEffect(() => {
     if (!slotsForDay.length) {
-      setShow(true);
-      setBlockedStamps([]);
-      return;
+      setShow(true)
+      setBlockedStamps([])
+      return
     }
 
     // Check if there are slots available for the selected day
-    const slotsAvailable = slotsForDay.some((slot) => !slot.deleted);
+    const slotsAvailable = slotsForDay.some((slot) => !slot.deleted)
 
     if (slotsAvailable) {
-      const filteredTimeSlots = slotsForDay.filter((slot) => !slot.deleted);
+      const filteredTimeSlots = slotsForDay.filter((slot) => !slot.deleted)
 
-      const timestamps = [];
+      const timestamps = []
       filteredTimeSlots.forEach((slot) => {
-        const { startTime, endTime } = slot;
-        let currTime = new Date(startTime);
+        const { startTime, endTime } = slot
+        let currTime = new Date(startTime)
         while (currTime < endTime) {
-          timestamps.push(currTime.getTime());
-          currTime.setMinutes(currTime.getMinutes() + 10);
+          timestamps.push(currTime.getTime())
+          currTime.setMinutes(currTime.getMinutes() + 10)
         }
-      });
+      })
 
-      setBlockedStamps(timestamps);
-      setShow(true);
+      setBlockedStamps(timestamps)
+      setShow(true)
     } else {
-      setShow(true);
+      setShow(true)
     }
-  }, [slotsForDay]);
+  }, [slotsForDay])
 
-   const handleSubmit = async (e) => {
-     e.preventDefault();
-     if (!day || !startTime || !endTime || !capacity || !ticketPrice) return;
-     const params = {
-       movieId: singleMovie.id,
-       ticketCost : ticketPrice,
-       startTime: new Date(startTime).getTime(),
-       endTime: new Date(endTime).getTime(),
-       capacity: capacity,
-       day,
-     };
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!day || !startTime || !endTime || !capacity || !ticketPrice) return
+    const params = {
+      movieId: singleMovie.id,
+      ticketCost: ticketPrice,
+      startTime: new Date(startTime).getTime(),
+      endTime: new Date(endTime).getTime(),
+      capacity: capacity,
+      day,
+    }
 
-     await toast.promise(
-        new Promise(async (resolve, reject) => {
-          await addSlot(params)
-            .then(async () => {
-              resetForm();
-              handleClose()
-              await getSlots(day);
-              resolve();
-            })
-            .catch(() => reject());
-        }),
-        {
-          pending: "Approve transaction...",
-          success: "Time slot added successfully 👌",
-          error: "Encountered error 🤯",
-        }
-      );
-
-   };
-
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await addSlot(params)
+          .then(async () => {
+            resetForm()
+            handleClose()
+            await getSlots(day)
+            resolve()
+          })
+          .catch(() => reject())
+      }),
+      {
+        pending: 'Approve transaction...',
+        success: 'Time slot added successfully 👌',
+        error: 'Encountered error 🤯',
+      }
+    )
+  }
 
   const resetForm = () => {
-    setDay(null);
-    setStartTime(null);
-    setEndTime(null);
-    setTicketPrice("");
-    setCapacity("");
-    setShow(false);
-  };
+    setDay(null)
+    setStartTime(null)
+    setEndTime(null)
+    setTicketPrice('')
+    setCapacity('')
+    setShow(false)
+  }
 
   return (
     <div
@@ -173,7 +164,7 @@ const maxEndTime = new Date(day).setHours(23, 59, 59, 999);
           <div className="flex flex-col justify-center items-center rounded-xl mt-5 mb-5">
             <div className="flex justify-center items-center rounded-full overflow-hidden h-10 w-64 shadow-md shadow-slate-300 p-4">
               <p className="text-slate-700">
-                {" "}
+                {' '}
                 Dapp <span className="text-red-700">Cinemas</span>
               </p>
             </div>
@@ -276,7 +267,7 @@ const maxEndTime = new Date(day).setHours(23, 59, 59, 999);
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 export default AddSlot

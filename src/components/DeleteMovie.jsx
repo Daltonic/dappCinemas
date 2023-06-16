@@ -1,6 +1,6 @@
 import { RiErrorWarningFill } from "react-icons/ri";
 import { useGlobalState, setGlobalState } from '../store';
-import { deleteMovie, getMovies } from '../services/Blockchain.services';
+import { deleteMovie, getMovies } from '../services/blockchain';
 import { toast } from 'react-toastify'
 
 const DeleteMovie = () => {

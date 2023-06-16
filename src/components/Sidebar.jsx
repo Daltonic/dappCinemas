@@ -3,9 +3,8 @@ import { MdMovie } from 'react-icons/md'
 import { BsPlusLg } from 'react-icons/bs'
 import { BsFillGearFill } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
-import { connectWallet } from '../services/Blockchain.services'
+import { connectWallet, getOwner } from '../services/blockchain'
 import { truncate, useGlobalState } from '../store'
-import { getOwner } from '../services/Blockchain.services'
 
 const Sidebar = () => {
   const [connectedAccount] = useGlobalState('connectedAccount')

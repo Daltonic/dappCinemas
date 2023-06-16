@@ -4,7 +4,7 @@ import { MdMenu } from 'react-icons/md'
 import { AiOutlineClose } from 'react-icons/ai'
 import { TbSearch } from 'react-icons/tb'
 import { truncate, useGlobalState } from '../store'
-import { connectWallet } from '../services/Blockchain.services'
+import { connectWallet } from '../services/blockchain'
 
 const Header = () => {
   const [toggleMenu, setToggleMenu] = useState(false)

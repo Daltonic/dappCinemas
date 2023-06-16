@@ -1,91 +1,93 @@
-import {useEffect, useState} from "react";
-import Emancipation from "../asset/emancipation.jpg";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import { getMovie, movieSlots, buyTicket, getOwner } from "../services/Blockchain.services";
-import { setGlobalState, useGlobalState } from "../store";
-import { useParams } from "react-router-dom";
-import moment from "moment";
+import { useEffect, useState } from 'react'
+import Emancipation from '../asset/emancipation.jpg'
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
+import {
+  getMovie,
+  movieSlots,
+  buyTicket,
+  getOwner,
+} from '../services/blockchain'
+import { setGlobalState, useGlobalState } from '../store'
+import { useParams } from 'react-router-dom'
+import moment from 'moment'
 import { toast } from 'react-toastify'
-import ChatIcon from "@mui/icons-material/Chat";
-import ChatCommand from "../components/ChatCommand";
-import AuthChat from "../components/AuthChat";
-import ChatModal from "../components/ChatModal";
-import { getGroup } from "../services/Chat";
+import ChatIcon from '@mui/icons-material/Chat'
+import ChatCommand from '../components/ChatCommand'
+import AuthChat from '../components/AuthChat'
+import ChatModal from '../components/ChatModal'
+import { getGroup } from '../services/chat'
 
 const MovieDetailsPage = () => {
-  const [loaded,setLoaded] = useState(false)
+  const [loaded, setLoaded] = useState(false)
   const [movie] = useGlobalState('movie')
   const [slotsForMovie] = useGlobalState('slotsForMovie')
   const [group] = useGlobalState('group')
-  const [currentUser] = useGlobalState("currentUser");
-  const [connectedAccount] = useGlobalState("connectedAccount");
-  const [filteredSlots,setFilteredSlots] = useState([])
+  const [currentUser] = useGlobalState('currentUser')
+  const [connectedAccount] = useGlobalState('connectedAccount')
+  const [filteredSlots, setFilteredSlots] = useState([])
   const { id } = useParams()
-  const [isOnline, setIsOnline] = useState(false);
+  const [isOnline, setIsOnline] = useState(false)
 
-  useEffect(async()=>{
-    
-    await getMovie(id).then(async ()=>{
-      await movieSlots(id).then(()=>setLoaded(true))
+  useEffect(async () => {
+    await getMovie(id).then(async () => {
+      await movieSlots(id).then(() => setLoaded(true))
     })
     await getGroup(`guid_${id}`).then((Group) => {
-      setGlobalState("group", Group);
-    });
-  },[])
+      setGlobalState('group', Group)
+    })
+  }, [])
 
-
-  useEffect(()=>{
-    setIsOnline(currentUser?.uid.toLowerCase() == connectedAccount);
-  },[currentUser])
+  useEffect(() => {
+    setIsOnline(currentUser?.uid.toLowerCase() == connectedAccount)
+  }, [currentUser])
 
   const handleChat = () => {
     if (isOnline && (!group || !group.hasJoined)) {
-      setGlobalState("chatCommandModal", "scale-100");
+      setGlobalState('chatCommandModal', 'scale-100')
     } else if (isOnline && group && group.hasJoined) {
-      setGlobalState("chatModal", "scale-100");
-    } else{
-      setGlobalState("authChatModal", "scale-100");
+      setGlobalState('chatModal', 'scale-100')
+    } else {
+      setGlobalState('authChatModal', 'scale-100')
       alert(currentUser?.uid.toLowerCase() + connectedAccount)
     }
-  };
+  }
 
   useEffect(() => {
-      const filteredTimeSlots = slotsForMovie.filter(
-        (slot) => !slot.deleted && slot.published
-      );
-      setFilteredSlots(filteredTimeSlots);
-  }, [slotsForMovie]);
-
+    const filteredTimeSlots = slotsForMovie.filter(
+      (slot) => !slot.deleted && slot.published
+    )
+    setFilteredSlots(filteredTimeSlots)
+  }, [slotsForMovie])
 
   function convertTimestampToTime(timestamp) {
-    return moment(timestamp).format("h:mm A");
+    return moment(timestamp).format('h:mm A')
   }
   function formatDateWithDayName(timestamp) {
-    return moment(timestamp).format("dddd, MMMM Do YYYY");
+    return moment(timestamp).format('dddd, MMMM Do YYYY')
   }
 
-  const handleBuyTicket = async (day, Id, ticketCost)=> {
-      const params = {
-        movieId: id,
-        day,
-        id: Id,
-        ticketCost
+  const handleBuyTicket = async (day, Id, ticketCost) => {
+    const params = {
+      movieId: id,
+      day,
+      id: Id,
+      ticketCost,
+    }
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await buyTicket(params)
+          .then(async () => {
+            movieSlots(id)
+            resolve()
+          })
+          .catch(() => reject())
+      }),
+      {
+        pending: 'Approve transaction...',
+        success: 'ticket bought successfully 👌',
+        error: 'Encountered error 🤯',
       }
-        await toast.promise(
-          new Promise(async (resolve, reject) => {
-            await buyTicket(params)
-              .then(async () => {
-                movieSlots(id)
-                resolve();
-              })
-              .catch(() => reject());
-          }),
-          {
-            pending: "Approve transaction...",
-            success: "ticket bought successfully 👌",
-            error: "Encountered error 🤯",
-          }
-        );
+    )
   }
 
   return loaded ? (
@@ -97,7 +99,7 @@ const MovieDetailsPage = () => {
         <div className="flex flex-col space-y-2">
           <h3 className="font-black text-2xl">{movie.name}</h3>
           <div className="flex space-x-2 my-2 justify-center">
-            {movie.genre.split(",").map((genre, i) => (
+            {movie.genre.split(',').map((genre, i) => (
               <button
                 className="px-4 py-1 text-white rounded-md bg-cyan-700"
                 key={i}
@@ -125,7 +127,7 @@ const MovieDetailsPage = () => {
                   className="flex text-center align-center mx-auto space-x-8 my-10"
                 >
                   <p className="font-bold">
-                    DATE:{" "}
+                    DATE:{' '}
                     <span className="font-thin">
                       {formatDateWithDayName(slot.day)}
                     </span>
@@ -135,7 +137,7 @@ const MovieDetailsPage = () => {
                 <div className="grid grid-cols-1  gap-4 p-2">
                   <div className="flex flex-col space-y-4 items-center justify-center  md:flex-row align-center  space-x-4  bg-gray-300 rounded-md p-2  m-auto w-full md:w-2/3">
                     <div>
-                      {" "}
+                      {' '}
                       <p>{convertTimestampToTime(slot.startTime)}</p>
                     </div>
                     <div className="flex items-center">
@@ -162,13 +164,13 @@ const MovieDetailsPage = () => {
                 </div>
               </>
             ))
-          : "No slots yet"}
+          : 'No slots yet'}
       </div>
       <ChatCommand movie={movie} />
       <AuthChat />
       <ChatModal />
     </div>
-  ) : null;
+  ) : null
 }
 
-export default MovieDetailsPage;
+export default MovieDetailsPage

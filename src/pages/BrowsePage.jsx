@@ -1,5 +1,5 @@
 import { useState,useEffect } from "react";
-import { getMovies } from "../services/Blockchain.services";
+import { getMovies } from "../services/blockchain";
 import { useGlobalState } from "../store";
 import Image from '../asset/heroimage.jpg'
 import { Link } from "react-router-dom";

@@ -1,50 +1,50 @@
-import { FaTimes } from "react-icons/fa";
-import { setGlobalState, useGlobalState } from "../store";
-import { signUpWithCometChat, loginWithCometChat } from "../services/Chat";
-import { toast } from "react-toastify";
+import { FaTimes } from 'react-icons/fa'
+import { setGlobalState, useGlobalState } from '../store'
+import { signUpWithCometChat, loginWithCometChat } from '../services/chat'
+import { toast } from 'react-toastify'
 
 const AuthChat = () => {
-  const [authChatModal] = useGlobalState("authChatModal");
+  const [authChatModal] = useGlobalState('authChatModal')
 
   const handleClose = () => {
-    setGlobalState("authChatModal", "scale-0");
-  };
+    setGlobalState('authChatModal', 'scale-0')
+  }
 
   const handleSignUp = async () => {
     await toast.promise(
       new Promise(async (resolve, reject) => {
         await signUpWithCometChat()
           .then((user) => {
-            setGlobalState("currentUser", user);
-            resolve();
+            setGlobalState('currentUser', user)
+            resolve()
           })
-          .catch((error) => console.log(error));
+          .catch((error) => console.log(error))
       }),
       {
-        pending: "processing...",
-        success: "Account created, please login 👌",
-        error: "Encountered error 🤯",
+        pending: 'processing...',
+        success: 'Account created, please login 👌',
+        error: 'Encountered error 🤯',
       }
-    );
-  };
+    )
+  }
 
   const handleLogin = async () => {
     await toast.promise(
       new Promise(async (resolve, reject) => {
         await loginWithCometChat()
           .then((user) => {
-            setGlobalState("currentUser", user);
-            resolve();
+            setGlobalState('currentUser', user)
+            resolve()
           })
-          .catch(() => reject());
+          .catch(() => reject())
       }),
       {
-        pending: "processing...",
-        success: "login successfull 👌",
-        error: "Encountered error 🤯",
+        pending: 'processing...',
+        success: 'login successfull 👌',
+        error: 'Encountered error 🤯',
       }
-    );
-  };
+    )
+  }
 
   return (
     <div
@@ -73,7 +73,7 @@ const AuthChat = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AuthChat;
+export default AuthChat
