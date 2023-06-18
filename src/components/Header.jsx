@@ -68,18 +68,14 @@ const Menu = () => {
       </div>
 
       <div className="flex flex-col space-y-4 items-center text-center w-full  ">
-        <p className="p-2   shadow-md w-full bg-white">
-          <Link to="/">
-            <span className="p-2 cursor-pointer  hover: shadow-md rounded-md bg-white hover:bg-gray-300 ">
-              Browse
-            </span>
-          </Link>
-        </p>
-        <Link
-          to="/moviedetails"
-          className="p-2 cursor-pointer  shadow-md w-full bg-white hover:text-red-400"
-        >
-          Watchlist
+        <Link className="p-2 shadow-md w-full bg-white" to="/">
+          Movies
+        </Link>
+        <Link className="p-2 shadow-md w-full bg-white" to="/manage/movies">
+          Manage Movie
+        </Link>
+        <Link className="p-2 shadow-md w-full bg-white" to="/add/movies">
+          Add Movie
         </Link>
         <div className="flex mt-4 list-none">
           {connectedAccount ? (

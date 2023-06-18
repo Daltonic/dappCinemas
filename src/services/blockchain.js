@@ -301,7 +301,7 @@ const structuredMovie = (movies) =>
     imageUrl: movie.imageUrl,
     genre: movie.genre,
     description: movie.description,
-    timestamp: new Date(movie.timestamp).getTime(),
+    timestamp: Number(movie.timestamp),
     deleted: movie.deleted,
   }))
 

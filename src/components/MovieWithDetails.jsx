@@ -51,7 +51,7 @@ const MovieWithDetails = ({ movie }) => {
 
   return (
     <div className="w-5/6 shadow">
-      <div className="w-5/6 shadow-lg rounded-md p-4 m-4">
+      <div className="w-5/6 p-4 m-4">
         <div className="flex items-center justify-between">
           <h4 className="text-xl font-bold">{movie.title}</h4>
           <div className="flex space-x-2">

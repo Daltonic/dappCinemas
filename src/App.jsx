@@ -9,6 +9,9 @@ import BrowsePage from './pages/BrowsePage'
 import MovieDetailsPage from './pages/MovieDetailsPage'
 import ManageMovies from './pages/ManageMovies'
 import { ToastContainer } from 'react-toastify'
+import AddSlot from './components/AddSlot'
+import UpdateMovie from './components/UpdateMovie'
+import DeleteMovie from './components/DeleteMovie'
 
 const App = () => {
   const [loaded, setLoaded] = useState(false)
@@ -25,13 +28,18 @@ const App = () => {
         {loaded && (
           <Routes>
             <Route path="/" element={<BrowsePage />} />
-            <Route path="/moviedetails/:id" element={<MovieDetailsPage />} />
-            <Route path="/addmovies" element={<Addmovie />} />
+            <Route path="/movie/:id" element={<MovieDetailsPage />} />
+            <Route path="/add/movies" element={<Addmovie />} />
             <Route path="/timeslot" element={<Timeslot />} />
-            <Route path="/managemovies" element={<ManageMovies />} />
+            <Route path="/manage/movies" element={<ManageMovies />} />
           </Routes>
         )}
       </div>
+
+      <AddSlot />
+      <UpdateMovie />
+      <DeleteMovie />
+
       <ToastContainer
         position="bottom-center"
         autoClose={5000}

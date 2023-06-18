@@ -55,7 +55,6 @@ contract DappCinemas is Ownable {
     mapping(uint256 => TimeSlotStruct[]) movieSlotsOf;
     mapping(uint256 => mapping(uint256 => TicketStruct[])) ticketsOf;
 
-
     function addMovie(
         string memory name,
         string memory imageUrl,
@@ -91,7 +90,7 @@ contract DappCinemas is Ownable {
         string memory description
     ) public onlyOwner {
         require(movieExists[id] == true, "movie doesn't exist!");
-        require(!movieToTicketHolders[id],"movie already has ticket holders");
+        require(!movieToTicketHolders[id], "movie already has ticket holders");
         require(bytes(name).length > 0, "Movie name required");
         require(bytes(imageUrl).length > 0, "Movie image url required");
         require(bytes(genre).length > 0, "Movie genre required");
@@ -106,7 +105,7 @@ contract DappCinemas is Ownable {
 
     function deleteMovie(uint256 id) public onlyOwner {
         require(movieExists[id] == true, "movie doesn't exist!");
-        require(!movieToTicketHolders[id],"movie already has ticket holders");
+        require(!movieToTicketHolders[id], "movie already has ticket holders");
 
         movies[id].deleted = true;
         movieExists[id] = false;
@@ -144,7 +143,6 @@ contract DappCinemas is Ownable {
         require(capacity > 0, "Capacity must be greater than 0!");
         require(ticketCost > 0 ether, "Ticket price must be greater than 0!");
 
-        
         TimeSlotStruct memory timeslot;
 
         timeslot.id = slotsOf[day].length;
@@ -160,23 +158,17 @@ contract DappCinemas is Ownable {
         slotsOf[day].push(movieSlotsOf[movieId][timeslot.id]);
     }
 
-    function deleteSlot(
-        uint256 id,
-        uint256 movieId
-    ) public onlyOwner {
-        require(timeslotExists[id],"timeslot doesn't exist");
+    function deleteSlot(uint256 id, uint256 movieId) public onlyOwner {
+        require(timeslotExists[id], "timeslot doesn't exist");
         performRefund(movieId, movieSlotsOf[movieId][id].day);
 
         movieSlotsOf[movieId][id].deleted = true;
         slotsOf[movieSlotsOf[movieId][id].day][id].deleted = true;
     }
 
-
-    function getSlots(uint256 day)
-     public
-     view
-     returns (TimeSlotStruct[] memory Timelines)
-    {
+    function getSlots(
+        uint256 day
+    ) public view returns (TimeSlotStruct[] memory Timelines) {
         uint256 totalSpace;
         for (uint256 i = 0; i < slotsOf[day].length; i++) {
             totalSpace++;
@@ -192,45 +184,67 @@ contract DappCinemas is Ownable {
         }
     }
 
-    function getSlotsForMovie(uint movieId) 
-        public 
-        view
-        returns(TimeSlotStruct[] memory Timelines) 
-    {
+    function getSlotsForMovie(
+        uint movieId
+    ) public view returns (TimeSlotStruct[] memory Timelines) {
         uint256 totalSpace;
-        for(uint256 i = 0; i < movieSlotsOf[movieId].length; i++) {
+        for (uint256 i = 0; i < movieSlotsOf[movieId].length; i++) {
             totalSpace++;
         }
         Timelines = new TimeSlotStruct[](totalSpace);
 
         uint index;
-        for(uint256 i = 0; i < movieSlotsOf[movieId].length; i++) {
+        for (uint256 i = 0; i < movieSlotsOf[movieId].length; i++) {
             TimeSlotStruct memory theSlot = movieSlotsOf[movieId][i];
             Timelines[index] = theSlot;
             index++;
         }
     }
 
-    function getSlot(uint movieId, uint id) public view returns(TimeSlotStruct memory) {
+    function getSlot(
+        uint movieId,
+        uint id
+    ) public view returns (TimeSlotStruct memory) {
         return movieSlotsOf[movieId][id];
     }
 
-    function getSlotForDay(uint id, uint day) public view returns(TimeSlotStruct memory) {
+    function getSlotForDay(
+        uint id,
+        uint day
+    ) public view returns (TimeSlotStruct memory) {
         return slotsOf[day][id];
     }
 
-    function publishTimeSlot(uint256 id, uint256 movieId, uint256 day) public onlyOwner {
+    function publishTimeSlot(
+        uint256 id,
+        uint256 movieId,
+        uint256 day
+    ) public onlyOwner {
         require(timeslotExists[id], "timeslot doesn't exist");
-        require(!movieSlotsOf[movieId][id].published, "timeslot already published");
+        require(
+            !movieSlotsOf[movieId][id].published,
+            "timeslot already published"
+        );
 
         movieSlotsOf[movieId][id].published = true;
         slotsOf[day][id].published = true;
     }
 
-    function buyTicket(uint256 movieId,uint256 day, uint256 id) public payable {
-        require(msg.value >= movieSlotsOf[movieId][id].ticketCost, "Insufficient amount");
+    function buyTicket(
+        uint256 movieId,
+        uint256 day,
+        uint256 id
+    ) public payable {
+        require(
+            msg.value >= movieSlotsOf[movieId][id].ticketCost,
+            "Insufficient amount"
+        );
         require(movieSlotsOf[movieId][id].published, "Time slot doesn't exist");
-        require(movieSlotsOf[movieId][id].seatings < movieSlotsOf[movieId][id].capacity, "Capacity full, book the next slot");
+        require(
+            movieSlotsOf[movieId][id].seatings <
+                movieSlotsOf[movieId][id].capacity,
+            "Capacity full, book the next slot"
+        );
 
         _totalTickets.increment();
         TicketStruct memory ticket;
@@ -248,21 +262,27 @@ contract DappCinemas is Ownable {
         movieToTicketHolders[movieId] = true;
     }
 
-    function getTicketHolders(uint movieId, uint day) public view returns(TicketStruct[] memory) {
+    function getTicketHolders(
+        uint movieId,
+        uint day
+    ) public view returns (TicketStruct[] memory) {
         return ticketsOf[movieId][day];
     }
 
     function withdraw(uint256 movieId, uint256 id) public onlyOwner {
         require(movieSlotsOf[movieId][id].published, "Time slot doesn't exist");
-        require(currentTime() > movieSlotsOf[movieId][id].endTime, "Movie has not ended yet");
-        
-        uint256 amount = movieSlotsOf[movieId][id].ticketCost * movieSlotsOf[movieId][id].seatings;
+        require(
+            currentTime() > movieSlotsOf[movieId][id].endTime,
+            "Movie has not ended yet"
+        );
+
+        uint256 amount = movieSlotsOf[movieId][id].ticketCost *
+            movieSlotsOf[movieId][id].seatings;
         require(amount > 0, "No money to withdraw");
 
         movieSlotsOf[movieId][id].seatings = 0;
-        payTo(owner(),amount);
+        payTo(owner(), amount);
     }
-
 
     function performRefund(uint256 movieId, uint256 day) internal {
         for (uint256 i = 0; i < ticketsOf[movieId][day].length; i++) {
@@ -275,11 +295,9 @@ contract DappCinemas is Ownable {
         }
     }
 
-
-    function checkForTicketHolders(uint movieId) public view returns(bool) {
-          return movieToTicketHolders[movieId];
+    function checkForTicketHolders(uint movieId) public view returns (bool) {
+        return movieToTicketHolders[movieId];
     }
-
 
     function payTo(address to, uint256 amount) internal {
         (bool success, ) = payable(to).call{value: amount}("");
@@ -291,8 +309,7 @@ contract DappCinemas is Ownable {
         return newNum;
     }
 
-    function returnOwner () public view returns (address) {
+    function returnOwner() public view returns (address) {
         return owner();
     }
-  
 }

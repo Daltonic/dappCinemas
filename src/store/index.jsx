@@ -1,4 +1,4 @@
-import { createGlobalState } from "react-hooks-global-state";
+import { createGlobalState } from 'react-hooks-global-state'
 
 const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   movies: [],
@@ -8,33 +8,45 @@ const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   slotsForMovie: [],
   ticketHolders: [],
   movieToTicketHolderStatus: null,
-  connectedAccount: "",
+  connectedAccount: '',
   contract: null,
   messages: [],
   deployer: null,
-  updateMovieModal: "scale-0",
-  deleteMovieModal: "scale-0",
-  slotsModal: "scale-0",
-  ticketsModal: "scale-0",
-  addSlotModal: "scale-0",
+  updateMovieModal: 'scale-0',
+  deleteMovieModal: 'scale-0',
+  slotsModal: 'scale-0',
+  ticketsModal: 'scale-0',
+  addSlotModal: 'scale-0',
   currentUser: null,
-  chatModal: "scale-0",
-  chatCommandModal: "scale-0",
-  authChatModal: "scale-0",
+  chatModal: 'scale-0',
+  chatCommandModal: 'scale-0',
+  authChatModal: 'scale-0',
   group: null,
-  messages: []
-});
+  messages: [],
+})
 
 const truncate = (text, startChars, endChars, maxLength) => {
   if (text.length > maxLength) {
-    let start = text.substring(0, startChars);
-    let end = text.substring(text.length - endChars, text.length);
+    let start = text.substring(0, startChars)
+    let end = text.substring(text.length - endChars, text.length)
     while (start.length + end.length < maxLength) {
-      start = start + ".";
+      start = start + '.'
     }
-    return start + end;
+    return start + end
   }
-  return text;
-};
+  return text
+}
 
-export { setGlobalState, useGlobalState, getGlobalState, truncate };
+const convertTimestampToDate = (timestamp) => {
+  const date = new Date(timestamp)
+  const options = { month: 'long', day: 'numeric', year: 'numeric' }
+  return date.toLocaleDateString('en-US', options)
+}
+
+export {
+  setGlobalState,
+  useGlobalState,
+  getGlobalState,
+  truncate,
+  convertTimestampToDate,
+}

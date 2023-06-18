@@ -1,18 +1,16 @@
-import { RiErrorWarningFill } from "react-icons/ri";
-import { useGlobalState, setGlobalState } from '../store';
-import { deleteMovie, getMovies } from '../services/blockchain';
-import { toast } from 'react-toastify'
+import { RiErrorWarningFill } from 'react-icons/ri'
+import { useGlobalState, setGlobalState } from '../store'
 
 const DeleteMovie = () => {
   const [deleteMovieModal] = useGlobalState('deleteMovieModal')
   const [movie] = useGlobalState('movie')
 
-  const handleClose = ()=> {
-    setGlobalState('deleteMovieModal','scale-0')
-    setGlobalState('movie',null)
+  const handleClose = () => {
+    setGlobalState('deleteMovieModal', 'scale-0')
+    setGlobalState('movie', null)
   }
 
-  const handleSubmit = (e)=> {
+  const handleSubmit = (e) => {
     e.preventDefault()
   }
 
@@ -28,29 +26,32 @@ const DeleteMovie = () => {
           <div className="flex flex-col justify-center items-center rounded-xl mt-5 mb-5">
             <div className="flex justify-center items-center rounded-full overflow-hidden h-10 w-40 shadow-md shadow-slate-300 p-4 mb-4">
               <p className="text-slate-700">
-                {" "}
+                {' '}
                 Dapp <span className="text-red-700">Cinemas</span>
               </p>
             </div>
             <RiErrorWarningFill className="text-6xl text-red-700 " />
-            <p className="p-2">Are you sure you want to delete this question</p>
+            <p className="p-2">
+              Are you sure you want to delete{' '}
+              <span className="italic">"{movie?.name}"</span>
+            </p>
           </div>
 
           <div className="flex space-x-4 justify-between">
-            <div
-              className=" py-2 px-4 bg-cyan-500 text-white rounded-sm cursor-pointer"
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               onClick={handleClose}
             >
               Cancel
-            </div>
-            <button className="py-2 px-4 bg-red-500 text-white rounded-sm cursor-pointer">
+            </button>
+            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
               Confirm
             </button>
           </div>
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 export default DeleteMovie
