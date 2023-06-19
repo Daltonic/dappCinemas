@@ -25,11 +25,9 @@ const Addmovie = () => {
     if (!movie.imageUrl || !movie.name || !movie.genre || !movie.description)
       return
 
-    const params = { ...movie }
-
     await toast.promise(
       new Promise(async (resolve, reject) => {
-        await addMovie(params)
+        await addMovie(movie)
           .then((tx) => {
             navigate('/')
             resolve(tx)

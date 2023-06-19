@@ -1,62 +1,72 @@
 import { useEffect, useState } from 'react'
 import { useGlobalState, setGlobalState } from '../store'
 import { FaTimes } from 'react-icons/fa'
-import { updateMovie, getMovies } from '../services/blockchain'
+import { updateMovie } from '../services/blockchain'
 import { toast } from 'react-toastify'
 
 const UpdateMovie = () => {
   const [updateMovieModal] = useGlobalState('updateMovieModal')
-  const [singleMovie] = useGlobalState('singleMovie')
+  const [movieData] = useGlobalState('movie')
 
-  const [imageUrl, setImageUrl] = useState('')
-  const [name, setName] = useState('')
-  const [genre, setGenre] = useState('')
-  const [description, setDescription] = useState('')
+  const [movie, setMovie] = useState({
+    imageUrl: '',
+    name: '',
+    genre: '',
+    description: '',
+  })
 
   useEffect(() => {
-    if (singleMovie) {
-      setImageUrl(singleMovie.imageUrl)
-      setName(singleMovie.name)
-      setGenre(singleMovie.genre)
-      setDescription(singleMovie.description)
+    if (movieData) {
+      setMovie({
+        imageUrl: movieData.imageUrl,
+        name: movieData.name,
+        genre: movieData.genre,
+        description: movieData.description,
+      })
     }
-  }, [singleMovie])
+  }, [movieData])
 
-  const handleClose = () => {
+  const closeModal = () => {
     setGlobalState('updateMovieModal', 'scale-0')
-    setImageUrl('')
-    setName('')
-    setGenre('')
-    setDescription('')
-    setGlobalState('singleMovie', null)
+    setMovie({
+      imageUrl: '',
+      name: '',
+      genre: '',
+      description: '',
+    })
+    setGlobalState('movie', null)
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!imageUrl || !name || !genre || !description) return
-    const params = {
-      id: singleMovie.id,
-      name,
-      imageUrl,
-      genre,
-      description,
-    }
+    if (!movie.imageUrl || !movie.name || !movie.genre || !movie.description)
+      return
     await toast.promise(
       new Promise(async (resolve, reject) => {
-        await updateMovie(params)
+        await updateMovie({ ...movie, id: movieData.id })
           .then(async () => {
-            handleClose()
-            await getMovies()
+            closeModal()
             resolve()
           })
-          .catch(() => reject())
+          .catch((error) => {
+            console.log(error)
+            reject(error)
+          })
       }),
       {
         pending: 'Approve transaction...',
-        success: 'movie updated successfully 👌',
+        success: 'Movie updated successfully 👌',
         error: 'Encountered error 🤯',
       }
     )
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setMovie((prevMovie) => ({
+      ...prevMovie,
+      [name]: value,
+    }))
   }
 
   return (
@@ -67,11 +77,11 @@ const UpdateMovie = () => {
       <div className="bg-white shadow-lg shadow-slate-900 rounded-xl w-11/12 md:w-2/5 h-7/12 p-6">
         <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="flex flex-row justify-between items-center">
-            <p className="font-semibold">Update Movie</p>
+            <p className="font-semibold">Edit Movie</p>
             <button
               type="button"
               className="border-0 bg-transparent focus:outline-none"
-              onClick={handleClose}
+              onClick={closeModal}
             >
               <FaTimes className="text-gray-400" />
             </button>
@@ -94,8 +104,8 @@ const UpdateMovie = () => {
               type="url"
               name="image_url"
               placeholder="image url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
+              value={movie.imageUrl}
+              onChange={handleChange}
               required
             />
           </div>
@@ -106,8 +116,8 @@ const UpdateMovie = () => {
               type="text"
               name="name"
               placeholder="movie name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={movie.name}
+              onChange={handleChange}
               required
             />
           </div>
@@ -118,8 +128,8 @@ const UpdateMovie = () => {
               type="text"
               name="genre"
               placeholder="separate genre with commas, eg. hilarious, action, thrilling"
-              value={genre}
-              onChange={(e) => setGenre(e.target.value)}
+              value={movie.genre}
+              onChange={handleChange}
               required
             />
           </div>
@@ -130,8 +140,8 @@ const UpdateMovie = () => {
               type="text"
               name="description"
               placeholder="description."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={movie.description}
+              onChange={handleChange}
               required
             ></textarea>
           </div>
@@ -142,7 +152,7 @@ const UpdateMovie = () => {
             hover:bg-transparent hover:border hover:border-blue-400
             focus:outline-none focus:ring mt-5"
           >
-            Submit
+            Update
           </button>
         </form>
       </div>

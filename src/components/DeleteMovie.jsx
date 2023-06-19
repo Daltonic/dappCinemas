@@ -39,13 +39,13 @@ const DeleteMovie = () => {
 
           <div className="flex space-x-4 justify-between">
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full"
               onClick={handleClose}
             >
               Cancel
             </button>
-            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-              Confirm
+            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-5 rounded-full">
+              Proceed
             </button>
           </div>
         </form>

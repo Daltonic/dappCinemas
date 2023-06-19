@@ -7,6 +7,7 @@ import { TfiTicket } from 'react-icons/tfi'
 import { BsTrash3 } from 'react-icons/bs'
 import { BiDotsVerticalRounded } from 'react-icons/bi'
 import { convertTimestampToDate, setGlobalState, truncate } from '../store'
+import { Link } from 'react-router-dom'
 
 const MoviesTable = ({ movies }) => {
   return (
@@ -44,7 +45,9 @@ const MoviesTable = ({ movies }) => {
                   alt={movie.name}
                 />
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">{movie.name}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-blue-500">
+                <Link to={'/movie/' + movie.id}>{movie.name}</Link>
+              </td>
               <td className="px-6 py-4 whitespace-nowrap">{movie.genre}</td>
               <td className="px-6 py-4 whitespace-nowrap">
                 {convertTimestampToDate(movie.timestamp)}

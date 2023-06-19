@@ -74,6 +74,7 @@ const addMovie = async ({ name, imageUrl, genre, description }) => {
       const contract = await getEthereumContract()
       tx = await contract.addMovie(name, imageUrl, genre, description)
       await tx.wait()
+      await getMovies()
       resolve(tx)
     } catch (error) {
       reportError(error)
@@ -90,6 +91,7 @@ const updateMovie = async ({ id, name, imageUrl, genre, description }) => {
       const contract = await getEthereumContract()
       tx = await contract.updateMovie(id, name, imageUrl, genre, description)
       await tx.wait()
+      await getMovies()
       resolve(tx)
     } catch (error) {
       reportError(error)
