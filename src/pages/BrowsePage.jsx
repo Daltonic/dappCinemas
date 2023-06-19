@@ -1,4 +1,4 @@
-import { useGlobalState } from '../store'
+import { truncate, useGlobalState } from '../store'
 import Image from '../asset/heroimage.jpg'
 import { Link } from 'react-router-dom'
 
@@ -46,32 +46,21 @@ export default BrowsePage
 
 const MovieCard = ({ movie }) => {
   return (
-    <div className="flex justify-start flex-row space-x-8  sm:space-x-0  sm:flex-col p-3 space-y-2 shadow-lg w-auto rounded-lg border-2 border-gray-200">
+    <Link
+      to={`/movie/${movie.id}`}
+      className="flex justify-start flex-row space-x-8  sm:space-x-0
+      sm:flex-col p-3 space-y-2 shadow-lg w-auto rounded-lg border-2 border-gray-200"
+    >
       <div className="flex h-full w-auto">
-        <Link to={`/movie/${movie.id}`}>
-          <img
-            src={movie.imageUrl}
-            className="rounded-lg object-cover h-64 w-full"
-          />
-        </Link>
+        <img
+          src={movie.imageUrl}
+          className="rounded-lg object-cover h-64 w-full"
+        />
       </div>
       <div className="flex flex-col">
-        <Link to={`/movie/${movie.id}`}>
-          <h3 className="font-bold md:text-lg my-2">{movie.name}</h3>
-        </Link>
-        <div className="md:text-gray-500 font-normal md:text-base flex space-x-2">
-          {movie.genre.split(',').map((genre, i) => (
-            <span
-              key={i}
-              className="inline-block px-4 py-2 rounded-full bg-cyan-500 text-white
-              text-sm font-medium shadow-md transition-colors duration-300
-              hover:bg-cyan-600 cursor-pointer"
-            >
-              {genre}
-            </span>
-          ))}
-        </div>
+        <h3 className="font-bold md:text-lg my-2">{movie.name}</h3>
+        <p className='text-gray-600 font-light text-md'>{truncate(movie.description, 74, 0, 77)}</p>
       </div>
-    </div>
+    </Link>
   )
 }

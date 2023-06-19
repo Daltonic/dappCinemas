@@ -13,16 +13,11 @@ import {
   signUpWithCometChat,
 } from '../services/chat'
 import { setGlobalState, useGlobalState } from '../store'
-import { useEffect } from 'react'
 
 const ChatActions = ({ movie, group }) => {
   const [connectedAccount] = useGlobalState('connectedAccount')
   const [owner] = useGlobalState('deployer')
   const [currentUser] = useGlobalState('currentUser')
-
-  useEffect(() => {
-    console.log(currentUser)
-  }, [currentUser])
 
   const handleSignUp = async () => {
     await toast.promise(
@@ -49,6 +44,7 @@ const ChatActions = ({ movie, group }) => {
           .then((user) => {
             setGlobalState('currentUser', user)
             resolve(user)
+            window.location.reload()
           })
           .catch((error) => {
             alert(JSON.stringify(error))
@@ -70,6 +66,7 @@ const ChatActions = ({ movie, group }) => {
           .then((group) => {
             setGlobalState('group', group)
             resolve(group)
+            window.location.reload()
           })
           .catch((error) => {
             alert(JSON.stringify(error))
@@ -91,6 +88,7 @@ const ChatActions = ({ movie, group }) => {
           .then((group) => {
             setGlobalState('group', group)
             resolve()
+            window.location.reload()
           })
           .catch((error) => {
             alert(JSON.stringify(error))
@@ -187,18 +185,21 @@ const ChatActions = ({ movie, group }) => {
               </Menu.Item>
             )}
 
-            <Menu.Item>
-              {({ active }) => (
-                <button
-                  className={`flex justify-start items-center space-x-1 ${
-                    active ? 'bg-gray-200 text-black' : 'text-gray-900'
-                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                >
-                  <BsChatLeftDots size={17} />
-                  <span>Chat</span>
-                </button>
-              )}
-            </Menu.Item>
+            {group && group.hasJoined && (
+              <Menu.Item>
+                {({ active }) => (
+                  <button
+                    className={`flex justify-start items-center space-x-1 ${
+                      active ? 'bg-gray-200 text-black' : 'text-gray-900'
+                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    onClick={() => setGlobalState('chatModal', 'scale-100')}
+                  >
+                    <BsChatLeftDots size={17} />
+                    <span>Chat</span>
+                  </button>
+                )}
+              </Menu.Item>
+            )}
           </>
         )}
       </Menu.Items>

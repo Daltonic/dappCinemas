@@ -5,7 +5,6 @@ import { useGlobalState } from '../store'
 import { useParams } from 'react-router-dom'
 import moment from 'moment'
 import { toast } from 'react-toastify'
-import ChatCommand from '../components/ChatCommand'
 import ChatModal from '../components/ChatModal'
 import { getGroup } from '../services/chat'
 import ChatActions from '../components/ChatActions'
@@ -139,8 +138,7 @@ const MovieDetailsPage = () => {
             </>
           ))}
         </div>
-        <ChatCommand movie={movie} />
-        <ChatModal />
+        <ChatModal movie={movie} />
       </div>
     )
   )
