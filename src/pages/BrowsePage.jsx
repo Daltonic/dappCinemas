@@ -1,18 +1,11 @@
-import { useState, useEffect } from 'react'
-import { getMovies } from '../services/blockchain'
 import { useGlobalState } from '../store'
 import Image from '../asset/heroimage.jpg'
 import { Link } from 'react-router-dom'
 
 const BrowsePage = () => {
-  const [loaded, setLoaded] = useState(false)
   const [movies] = useGlobalState('movies')
 
-  useEffect(async () => {
-    await getMovies().then(() => setLoaded(true))
-  }, [])
-
-  return loaded ? (
+  return (
     <div className="flex flex-col w-full p-4">
       <div
         style={{ backgroundImage: 'url(' + Image + ')' }}
@@ -46,7 +39,7 @@ const BrowsePage = () => {
         </div>
       </div>
     </div>
-  ) : null
+  )
 }
 
 export default BrowsePage

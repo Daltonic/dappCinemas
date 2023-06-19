@@ -2,6 +2,7 @@ import abi from '../abis/src/contracts/DappCinemas.sol/DappCinemas.json'
 import address from '../abis/contractAddress.json'
 import { setGlobalState } from '../store'
 import { ethers } from 'ethers'
+import { logOutWithCometChat } from './chat'
 
 const { ethereum } = window
 const ContractAddress = address.address
@@ -41,16 +42,16 @@ const isWalletConnected = async () => {
 
     window.ethereum.on('accountsChanged', async () => {
       setGlobalState('connectedAccount', accounts[0])
-
-      await isWalletConnected().then(() => {
-        window.location.reload()
-      })
-
-      await logOutWithCometChat().then(() => {
-        setGlobalState('currentUser', null)
-      })
+      await isWalletConnected()
+      await logOutWithCometChat()
     })
-    return accounts[0]
+
+    if (accounts.length) {
+      setGlobalState('connectedAccount', accounts[0])
+    } else {
+      setGlobalState('connectedAccount', '')
+      console.log('No accounts found')
+    }
   } catch (error) {
     reportError(error)
   }
@@ -74,7 +75,7 @@ const addMovie = async ({ name, imageUrl, genre, description }) => {
       const contract = await getEthereumContract()
       tx = await contract.addMovie(name, imageUrl, genre, description)
       await tx.wait()
-      await getMovies()
+      await loadBlockchainData()
       resolve(tx)
     } catch (error) {
       reportError(error)
@@ -91,7 +92,7 @@ const updateMovie = async ({ id, name, imageUrl, genre, description }) => {
       const contract = await getEthereumContract()
       tx = await contract.updateMovie(id, name, imageUrl, genre, description)
       await tx.wait()
-      await getMovies()
+      await loadBlockchainData()
       resolve(tx)
     } catch (error) {
       reportError(error)
@@ -108,6 +109,7 @@ const deleteMovie = async (id) => {
       const contract = await getEthereumContract()
       tx = await contract.deleteMovie(id)
       await tx.wait()
+      await loadBlockchainData()
       resolve(tx)
     } catch (error) {
       reportError(error)
@@ -289,11 +291,16 @@ const getOwner = async () => {
   if (!ethereum) return alert('Please install metamask')
   try {
     const contract = await getEthereumContract()
-    const deployer = await contract.returnOwner()
-    setGlobalState('deployer', deployer)
+    const deployer = await contract.owner()
+    setGlobalState('deployer', deployer.toLowerCase())
   } catch (err) {
     reportError(err)
   }
+}
+
+const loadBlockchainData = async () => {
+  await getMovies()
+  await getOwner()
 }
 
 const structuredMovie = (movies) =>
@@ -337,6 +344,7 @@ export {
   connectWallet,
   isWalletConnected,
   getEthereumContract,
+  loadBlockchainData,
   addMovie,
   updateMovie,
   deleteMovie,
@@ -344,7 +352,6 @@ export {
   deleteSlot,
   publishTimeSlot,
   buyTicket,
-  getMovies,
   getMovie,
   getSlots,
   movieSlots,

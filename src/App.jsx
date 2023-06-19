@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import { isWalletConnected } from './services/blockchain'
+import { isWalletConnected, loadBlockchainData } from './services/blockchain'
 import Sidebar from './components/Sidebar'
 import Header from './components/Header'
 import Addmovie from './pages/Addmovie'
@@ -12,12 +12,13 @@ import { ToastContainer } from 'react-toastify'
 import AddSlot from './components/AddSlot'
 import UpdateMovie from './components/UpdateMovie'
 import DeleteMovie from './components/DeleteMovie'
+import { checkAuthState } from './services/chat'
 
 const App = () => {
-  const [loaded, setLoaded] = useState(false)
-
   useEffect(async () => {
-    await isWalletConnected().then(() => setLoaded(true))
+    await isWalletConnected()
+    await loadBlockchainData()
+    await checkAuthState()
   }, [])
 
   return (
@@ -25,15 +26,13 @@ const App = () => {
       <Sidebar />
       <div className="flex-1 overflow-auto">
         <Header />
-        {loaded && (
-          <Routes>
-            <Route path="/" element={<BrowsePage />} />
-            <Route path="/movie/:id" element={<MovieDetailsPage />} />
-            <Route path="/add/movies" element={<Addmovie />} />
-            <Route path="/timeslot" element={<Timeslot />} />
-            <Route path="/manage/movies" element={<ManageMovies />} />
-          </Routes>
-        )}
+        <Routes>
+          <Route path="/" element={<BrowsePage />} />
+          <Route path="/movie/:id" element={<MovieDetailsPage />} />
+          <Route path="/add/movies" element={<Addmovie />} />
+          <Route path="/timeslot" element={<Timeslot />} />
+          <Route path="/manage/movies" element={<ManageMovies />} />
+        </Routes>
       </div>
 
       <AddSlot />

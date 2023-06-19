@@ -308,8 +308,4 @@ contract DappCinemas is Ownable {
         uint256 newNum = (block.timestamp * 1000) + 1000;
         return newNum;
     }
-
-    function returnOwner() public view returns (address) {
-        return owner();
-    }
 }

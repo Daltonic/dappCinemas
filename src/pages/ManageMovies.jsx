@@ -1,19 +1,9 @@
-import { useEffect } from 'react'
-import { getMovies } from '../services/blockchain'
 import { useGlobalState } from '../store'
 import MoviesTable from '../components/MoviesTable'
 import { Link } from 'react-router-dom'
 
 const ManageMovies = () => {
   const [movies] = useGlobalState('movies')
-
-  useEffect(() => {
-    const fetchMovies = async () => {
-      await getMovies()
-    }
-
-    fetchMovies()
-  }, [])
 
   return (
     <div className="w-full min-h-[89vh] p-3 space-y-6">
