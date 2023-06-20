@@ -203,7 +203,7 @@ contract DappCinemas is Ownable {
         delete ticketHolder[movieId][slotId];
     }
 
-    function getMovieTimeSlot(
+    function getMovieTimeSlots(
         uint256 movieId
     ) public view returns (uint256[] memory MovieSlots) {
         uint256 available;
@@ -233,6 +233,12 @@ contract DappCinemas is Ownable {
     }
 
     function getTimeSlot(
+        uint256 slotId
+    ) public view returns (TimeSlotStruct memory) {
+        return movieTimeSlot[slotId];
+    }
+
+    function getTimeSlots(
         uint256 movieId
     ) public view returns (TimeSlotStruct[] memory MovieSlots) {
         uint256 available;

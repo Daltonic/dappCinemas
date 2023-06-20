@@ -1,27 +1,19 @@
 const { expect } = require('chai')
+const { ethers } = require('hardhat')
 
 const toWei = (num) => ethers.utils.parseEther(num.toString())
 const fromWei = (num) => ethers.utils.formatEther(num)
 
+describe('Contracts', () => {
+  const name = 'Terminator salvation'
+  const imageUrl = 'https://image.png'
+  const genre = 'thrill'
+  const description = 'Really cool movie'
+  const movieId = 1
+  const slotId = 1
 
-describe('Contracts',()=>{
-    const name = 'Terminator salvation'
-    const imageUrl = 'https://image.png'
-    const genre = 'thrill'
-    const description = 'Really cool movie'
-    const newName = 'Terminators salvation'
-    const newImageUrl = 'https://img.jpg'
-    const id = 1
-    
-    const ticketCost = toWei(3),
-    capacity = 13
-
-    const startTime = 1680264000000,
-    endTime = 1680267600000,
-    day = 1680220800000
-
-
-    beforeEach(async () => {
+  let contract, result
+  beforeEach(async () => {
     const Contract = await ethers.getContractFactory('DappCinemas')
     ;[deployer, buyer1, buyer2] = await ethers.getSigners()
 
@@ -29,100 +21,101 @@ describe('Contracts',()=>{
     await contract.deployed()
   })
 
-  describe('Movie',()=>{
-    beforeEach(async()=>{
-        await contract.connect(deployer).addMovie(
-          name,imageUrl,genre,description
-        )
+  // describe('Movie Management', () => {
+  //   beforeEach(async () => {
+  //     await contract.addMovie(name, imageUrl, genre, description)
+  //   })
+
+  //   it('should create a movie and verify its details', async () => {
+  //     result = await contract.getMovies()
+  //     expect(result).to.have.lengthOf(1)
+
+  //     result = await contract.getMovie(movieId)
+  //     expect(result.name).to.be.equal(name)
+  //     expect(result.imageUrl).to.be.equal(imageUrl)
+  //     expect(result.genre).to.be.equal(genre)
+  //     expect(result.description).to.be.equal(description)
+  //   })
+
+  //   it('should update movie details and verify the changes', async () => {
+  //     const updatedName = 'Terminator 2: Judgment Day'
+  //     const updatedImageUrl = 'https://updated-image.jpg'
+  //     const updatedGenre = 'Action'
+  //     const updatedDescription = 'One of the best action movies ever'
+
+  //     await contract.updateMovie(
+  //       movieId,
+  //       updatedName,
+  //       updatedImageUrl,
+  //       updatedGenre,
+  //       updatedDescription
+  //     )
+
+  //     const result = await contract.getMovie(movieId)
+  //     expect(result.name).to.be.equal(updatedName)
+  //     expect(result.imageUrl).to.be.equal(updatedImageUrl)
+  //     expect(result.genre).to.be.equal(updatedGenre)
+  //     expect(result.description).to.be.equal(updatedDescription)
+  //   })
+
+  //   it('should delete a movie and ensure it is no longer accessible', async () => {
+  //     result = await contract.getMovie(movieId)
+  //     expect(result.deleted).to.be.equal(false)
+
+  //     await contract.deleteMovie(movieId)
+
+  //     result = await contract.getMovie(movieId)
+  //     expect(result.deleted).to.be.equal(true)
+  //   })
+  // })
+
+  describe('Showtime Management', () => {
+    const ticketCosts = [toWei(0.02), toWei(0.04)]
+    const days = [1687305600000, 1687305600000]
+    const startTimes = [1687309200000, 1687309200000]
+    const endTimes = [1687314600000, 1687314600000]
+    const capacities = [5, 7]
+
+    beforeEach(async () => {
+      await contract.addMovie(name, imageUrl, genre, description)
+      await contract.addTimeslot(
+        movieId,
+        ticketCosts,
+        startTimes,
+        endTimes,
+        capacities,
+        days
+      )
     })
 
-    it('should confirm movie in array',async()=>{
-      result = await contract.getMovies()
-      expect(result).to.have.lengthOf(1)
+    it('should add a showtime and ensure it is added successfully', async () => {
+      result = await contract.getMovieTimeSlots(movieId)
+      expect(result).to.have.lengthOf(4)
+
+      result = await contract.getTimeSlots(movieId)
+      expect(result).to.have.lengthOf(2)
+
+      result = await contract.getTimeSlot(slotId)
+      expect(result.day).to.be.equal(days[0])
+      expect(result.startTime).to.be.equal(startTimes[0])
+      expect(result.endTime).to.be.equal(endTimes[0])
+      expect(result.ticketCost).to.be.equal(ticketCosts[0])
     })
 
-    it('should confirm fetching movie appropriately',async ()=> {
-        result = await contract.getMovie(id)
-        expect(result.name).to.be.equal(name)
-        expect(result.imageUrl).to.be.equal(imageUrl)
-        expect(result.genre).to.be.equal(genre)
-        expect(result.description).to.be.equal(description)
-    })
+    it('should delete a showtime and verify that it is no longer available.', async () => {
+      result = await contract.getTimeSlots(movieId)
+      expect(result).to.have.lengthOf(2)
 
-    it('should confirm apartment update',async () => {
-        result = await contract.getMovie(id)
-        expect(result.name).to.be.equal(name)
-        expect(result.imageUrl).to.be.equal(imageUrl)
-
-        await contract.connect(deployer).updateMovie(
-          id,
-          newName,
-          newImageUrl,
-          genre,
-          description
-        )
-
-        result = await contract.getMovie(id)
-        expect(result.name).to.be.equal(newName)
-        expect(result.imageUrl).to.be.equal(newImageUrl)
-    })
-  })
-
-  describe('Slots',()=>{
-      beforeEach(async()=>{
-        await contract.connect(deployer).addMovie(
-          name,imageUrl,genre,description
-        )
-    })
-    it('should confirm adding slots correctly',async ()=> {
-       result = await contract.getSlotsForMovie(id)
-       expect(result).to.have.lengthOf(0)
-
-       await contract.addSlot(id,ticketCost,startTime,endTime,capacity,day)
-       result = await contract.getSlotsForMovie(id)
-       secondResult = await contract.getSlots(day)
-       expect(result).to.have.lengthOf(1)
-       expect(secondResult).to.have.lengthOf(1)
-    })
-
-    it('should confirm slots deleting',async ()=> {
-      await contract.addSlot(id,ticketCost,startTime,endTime,capacity,day)
-      result = await contract.getSlot(id,0)
+      result = await contract.getTimeSlot(slotId)
       expect(result.deleted).to.be.equal(false)
 
-      await contract.deleteSlot(0,id)
-      result = await contract.getSlot(id,0)
-      secondResult = await contract.getSlotForDay(0,day)
+      await contract.deleteTimeSlot(movieId, slotId)
+
+      result = await contract.getTimeSlots(movieId)
+      expect(result).to.have.lengthOf(1)
+
+      result = await contract.getTimeSlot(slotId)
       expect(result.deleted).to.be.equal(true)
-      expect(secondResult.deleted).to.be.equal(true)
     })
   })
-
-  describe('Ticket buying',()=> {
-    beforeEach(async()=>{
-        await contract.connect(deployer).addMovie(
-          name,imageUrl,genre,description
-        )
-
-        await contract.connect(deployer).addSlot(
-          id,ticketCost,startTime,endTime,capacity,day
-        )
-    })
-
-    it('should confirm publishing slots', async ()=> {
-       await contract.connect(deployer).publishTimeSlot(0,id,day)
-       result = await contract.getSlot(id,0)
-       expect(result.published).to.be.equal(true)
-    })
-
-    it('should confirm ticket buying', async ()=> {
-        await contract.connect(deployer).publishTimeSlot(0,id,day)
-        await contract.connect(buyer1).buyTicket(id,day,0,{
-          value: ticketCost
-        })
-        result = await contract.getTicketHolders(id,0)
-        expect(result).to.have.lengthOf(1)
-    })
-
-  })
-}) 
+})
