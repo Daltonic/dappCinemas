@@ -18,12 +18,13 @@ const MovieDetailsPage = () => {
   const { id } = useParams()
 
   useEffect(async () => {
-    await getMovie(id).then(async () => {
-      await movieSlots(id).then(() => setLoaded(true))
-    })
+    await getMovie(id)
+    await movieSlots(id)
 
     const GROUP = await getGroup(`guid_${id}`)
+
     setGroup(GROUP)
+    setLoaded(true)
   }, [])
 
   useEffect(() => {
@@ -109,10 +110,7 @@ const MovieDetailsPage = () => {
               </div>
               <div className="grid grid-cols-1  gap-4 p-2">
                 <div className="flex flex-col space-y-4 items-center justify-center  md:flex-row align-center  space-x-4  bg-gray-300 rounded-md p-2  m-auto w-full md:w-2/3">
-                  <div>
-                    {' '}
-                    <p>{convertTimestampToTime(slot.startTime)}</p>
-                  </div>
+                  <p>{convertTimestampToTime(slot.startTime)}</p>
                   <div className="flex items-center">
                     <span>{slot.seatings}</span>/<span>{slot.capacity}</span>
                     <sub>spaces</sub>

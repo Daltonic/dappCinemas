@@ -4,7 +4,6 @@ import { isWalletConnected, loadBlockchainData } from './services/blockchain'
 import Sidebar from './components/Sidebar'
 import Header from './components/Header'
 import Addmovie from './pages/Addmovie'
-import Timeslot from './pages/Timeslot'
 import BrowsePage from './pages/BrowsePage'
 import MovieDetailsPage from './pages/MovieDetailsPage'
 import ManageMovies from './pages/ManageMovies'
@@ -30,7 +29,6 @@ const App = () => {
           <Route path="/" element={<BrowsePage />} />
           <Route path="/movie/:id" element={<MovieDetailsPage />} />
           <Route path="/add/movies" element={<Addmovie />} />
-          <Route path="/timeslot" element={<Timeslot />} />
           <Route path="/manage/movies" element={<ManageMovies />} />
         </Routes>
       </div>

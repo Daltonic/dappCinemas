@@ -10,6 +10,7 @@ contract DappCinemas is Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _totalMovies;
     Counters.Counter private _totalTickets;
+    Counters.Counter private _totalSlots;
 
     struct MovieStruct {
         uint256 id;
@@ -39,7 +40,7 @@ contract DappCinemas is Ownable {
         uint256 startTime;
         uint256 endTime;
         uint256 capacity;
-        uint256 seatings;
+        uint256 seats;
         bool deleted;
         bool published;
         uint256 day;
@@ -47,13 +48,11 @@ contract DappCinemas is Ownable {
 
     event Action(string actionType);
 
-    mapping(uint256 => MovieStruct) movies;
+    uint256 public balance;
     mapping(uint256 => bool) movieExists;
-    mapping(uint256 => bool) timeslotExists;
-    mapping(uint256 => bool) movieToTicketHolders;
-    mapping(uint256 => TimeSlotStruct[]) slotsOf;
-    mapping(uint256 => TimeSlotStruct[]) movieSlotsOf;
-    mapping(uint256 => mapping(uint256 => TicketStruct[])) ticketsOf;
+    mapping(uint256 => MovieStruct) movies;
+    mapping(uint256 => TimeSlotStruct) movieTimeSlot;
+    mapping(uint256 => mapping(uint256 => address[])) ticketHolder;
 
     function addMovie(
         string memory name,
@@ -76,39 +75,54 @@ contract DappCinemas is Ownable {
         movie.description = description;
         movie.timestamp = currentTime();
 
-        movies[_totalMovies.current()] = movie;
-        movieExists[_totalMovies.current()] = true;
+        movies[movie.id] = movie;
+        movieExists[movie.id] = true;
 
         emit Action("Movie added successfully");
     }
 
     function updateMovie(
-        uint256 id,
+        uint256 movieId,
         string memory name,
         string memory imageUrl,
         string memory genre,
         string memory description
     ) public onlyOwner {
-        require(movieExists[id] == true, "movie doesn't exist!");
-        require(!movieToTicketHolders[id], "movie already has ticket holders");
+        require(movieExists[movieId], "Movie doesn't exist!");
         require(bytes(name).length > 0, "Movie name required");
-        require(bytes(imageUrl).length > 0, "Movie image url required");
+        require(bytes(imageUrl).length > 0, "Movie image URL required");
         require(bytes(genre).length > 0, "Movie genre required");
         require(bytes(description).length > 0, "Movie description required");
 
-        movies[id].name = name;
-        movies[id].imageUrl = imageUrl;
-        movies[id].genre = genre;
-        movies[id].description = description;
+        for (uint256 slotId = 1; slotId <= _totalSlots.current(); slotId++) {
+            address[] storage holders = ticketHolder[movieId][slotId];
+            require(
+                holders.length == 0,
+                "Cannot update movie with purchased tickets"
+            );
+        }
+
+        movies[movieId].name = name;
+        movies[movieId].imageUrl = imageUrl;
+        movies[movieId].genre = genre;
+        movies[movieId].description = description;
+
         emit Action("Movie updated successfully");
     }
 
-    function deleteMovie(uint256 id) public onlyOwner {
-        require(movieExists[id] == true, "movie doesn't exist!");
-        require(!movieToTicketHolders[id], "movie already has ticket holders");
+    function deleteMovie(uint256 movieId) public onlyOwner {
+        require(movieExists[movieId], "Movie doesn't exist!");
 
-        movies[id].deleted = true;
-        movieExists[id] = false;
+        for (uint256 slotId = 1; slotId <= _totalSlots.current(); slotId++) {
+            address[] memory holders = ticketHolder[movieId][slotId];
+            require(
+                holders.length == 0,
+                "Cannot delete movie with purchased tickets"
+            );
+        }
+
+        movies[movieId].deleted = true;
+        movieExists[movieId] = false;
     }
 
     function getMovies() public view returns (MovieStruct[] memory Movies) {
@@ -132,171 +146,167 @@ contract DappCinemas is Ownable {
         return movies[id];
     }
 
-    function addSlot(
+    function addTimeslot(
         uint256 movieId,
-        uint256 ticketCost,
-        uint256 startTime,
-        uint256 endTime,
-        uint256 capacity,
-        uint256 day
+        uint256[] memory ticketCosts,
+        uint256[] memory startTimes,
+        uint256[] memory endTimes,
+        uint256[] memory capacities,
+        uint256[] memory viewingDays
     ) public onlyOwner {
-        require(capacity > 0, "Capacity must be greater than 0!");
-        require(ticketCost > 0 ether, "Ticket price must be greater than 0!");
+        require(movieExists[movieId], "Movie not found");
+        require(ticketCosts.length > 0, "Tickets cost must not be empty");
+        require(capacities.length > 0, "Capacities must not be empty");
+        require(startTimes.length > 0, "Start times cost must not be empty");
+        require(endTimes.length > 0, "End times cost must not be empty");
+        require(viewingDays.length > 0, "Viewing days must not be empty");
+        require(
+            ticketCosts.length == viewingDays.length &&
+                viewingDays.length == capacities.length &&
+                capacities.length == startTimes.length &&
+                startTimes.length == endTimes.length &&
+                endTimes.length == viewingDays.length,
+            "All parameters must have equal array length"
+        );
 
-        TimeSlotStruct memory timeslot;
+        for (uint i = 0; i < viewingDays.length; i++) {
+            _totalSlots.increment();
+            TimeSlotStruct memory movieSlot;
 
-        timeslot.id = slotsOf[day].length;
-        timeslot.movieId = movieId;
-        timeslot.ticketCost = ticketCost;
-        timeslot.startTime = startTime;
-        timeslot.endTime = endTime;
-        timeslot.day = day;
-        timeslot.capacity = capacity;
+            movieSlot.id = _totalSlots.current();
+            movieSlot.movieId = movieId;
+            movieSlot.ticketCost = ticketCosts[i];
+            movieSlot.startTime = startTimes[i];
+            movieSlot.endTime = endTimes[i];
+            movieSlot.day = viewingDays[i];
+            movieSlot.capacity = capacities[i];
 
-        timeslotExists[movieSlotsOf[movieId].length] = true;
-        movieSlotsOf[movieId].push(timeslot);
-        slotsOf[day].push(movieSlotsOf[movieId][timeslot.id]);
+            movieTimeSlot[movieSlot.id] = movieSlot;
+        }
     }
 
-    function deleteSlot(uint256 id, uint256 movieId) public onlyOwner {
-        require(timeslotExists[id], "timeslot doesn't exist");
-        performRefund(movieId, movieSlotsOf[movieId][id].day);
+    function deleteTimeSlot(uint256 movieId, uint256 slotId) public onlyOwner {
+        require(
+            movieExists[movieId] && movieTimeSlot[slotId].movieId == movieId,
+            "Movie not found"
+        );
 
-        movieSlotsOf[movieId][id].deleted = true;
-        slotsOf[movieSlotsOf[movieId][id].day][id].deleted = true;
+        movieTimeSlot[slotId].deleted = true;
+
+        for (uint i = 0; i < ticketHolder[movieId][slotId].length; i++) {
+            payTo(
+                ticketHolder[movieId][slotId][i],
+                movieTimeSlot[slotId].ticketCost
+            );
+            balance -= movieTimeSlot[slotId].ticketCost;
+        }
+        delete ticketHolder[movieId][slotId];
     }
 
-    function getSlots(
-        uint256 day
-    ) public view returns (TimeSlotStruct[] memory Timelines) {
-        uint256 totalSpace;
-        for (uint256 i = 0; i < slotsOf[day].length; i++) {
-            totalSpace++;
+    function getMovieTimeSlot(
+        uint256 movieId
+    ) public view returns (uint256[] memory MovieSlots) {
+        uint256 available;
+        for (uint i = 0; i < _totalSlots.current(); i++) {
+            if (
+                movieTimeSlot[i + 1].movieId == movieId &&
+                !movieTimeSlot[i + 1].deleted &&
+                movieTimeSlot[i + 1].startTime > currentTime()
+            ) {
+                available++;
+            }
         }
 
-        Timelines = new TimeSlotStruct[](totalSpace);
+        MovieSlots = new uint256[](available * 2);
 
         uint256 index;
-        for (uint256 i = 0; i < slotsOf[day].length; i++) {
-            TimeSlotStruct memory theSlot = slotsOf[day][i];
-            Timelines[index] = theSlot;
-            index++;
-        }
-    }
-
-    function getSlotsForMovie(
-        uint movieId
-    ) public view returns (TimeSlotStruct[] memory Timelines) {
-        uint256 totalSpace;
-        for (uint256 i = 0; i < movieSlotsOf[movieId].length; i++) {
-            totalSpace++;
-        }
-        Timelines = new TimeSlotStruct[](totalSpace);
-
-        uint index;
-        for (uint256 i = 0; i < movieSlotsOf[movieId].length; i++) {
-            TimeSlotStruct memory theSlot = movieSlotsOf[movieId][i];
-            Timelines[index] = theSlot;
-            index++;
-        }
-    }
-
-    function getSlot(
-        uint movieId,
-        uint id
-    ) public view returns (TimeSlotStruct memory) {
-        return movieSlotsOf[movieId][id];
-    }
-
-    function getSlotForDay(
-        uint id,
-        uint day
-    ) public view returns (TimeSlotStruct memory) {
-        return slotsOf[day][id];
-    }
-
-    function publishTimeSlot(
-        uint256 id,
-        uint256 movieId,
-        uint256 day
-    ) public onlyOwner {
-        require(timeslotExists[id], "timeslot doesn't exist");
-        require(
-            !movieSlotsOf[movieId][id].published,
-            "timeslot already published"
-        );
-
-        movieSlotsOf[movieId][id].published = true;
-        slotsOf[day][id].published = true;
-    }
-
-    function buyTicket(
-        uint256 movieId,
-        uint256 day,
-        uint256 id
-    ) public payable {
-        require(
-            msg.value >= movieSlotsOf[movieId][id].ticketCost,
-            "Insufficient amount"
-        );
-        require(movieSlotsOf[movieId][id].published, "Time slot doesn't exist");
-        require(
-            movieSlotsOf[movieId][id].seatings <
-                movieSlotsOf[movieId][id].capacity,
-            "Capacity full, book the next slot"
-        );
-
-        _totalTickets.increment();
-        TicketStruct memory ticket;
-        ticket.id = _totalTickets.current();
-        ticket.movieId = movieId;
-        ticket.day = day;
-        ticket.slotId = id;
-        ticket.cost = msg.value;
-        ticket.owner = msg.sender;
-        ticket.timestamp = currentTime();
-
-        slotsOf[day][id].seatings++;
-        movieSlotsOf[movieId][id].seatings++;
-        ticketsOf[movieId][id].push(ticket);
-        movieToTicketHolders[movieId] = true;
-    }
-
-    function getTicketHolders(
-        uint movieId,
-        uint day
-    ) public view returns (TicketStruct[] memory) {
-        return ticketsOf[movieId][day];
-    }
-
-    function withdraw(uint256 movieId, uint256 id) public onlyOwner {
-        require(movieSlotsOf[movieId][id].published, "Time slot doesn't exist");
-        require(
-            currentTime() > movieSlotsOf[movieId][id].endTime,
-            "Movie has not ended yet"
-        );
-
-        uint256 amount = movieSlotsOf[movieId][id].ticketCost *
-            movieSlotsOf[movieId][id].seatings;
-        require(amount > 0, "No money to withdraw");
-
-        movieSlotsOf[movieId][id].seatings = 0;
-        payTo(owner(), amount);
-    }
-
-    function performRefund(uint256 movieId, uint256 day) internal {
-        for (uint256 i = 0; i < ticketsOf[movieId][day].length; i++) {
-            TicketStruct storage ticket = ticketsOf[movieId][day][i];
-            if (ticket.movieId == movieId && !ticket.refunded) {
-                ticket.refunded = true;
-                _totalTickets.decrement();
-                payTo(ticket.owner, ticket.cost);
+        for (uint i = 0; i < _totalSlots.current(); i++) {
+            if (
+                movieTimeSlot[i + 1].movieId == movieId &&
+                !movieTimeSlot[i + 1].deleted &&
+                movieTimeSlot[i + 1].startTime > currentTime()
+            ) {
+                MovieSlots[index++] = movieTimeSlot[i + 1].startTime;
+                MovieSlots[index++] = movieTimeSlot[i + 1].endTime;
             }
         }
     }
 
-    function checkForTicketHolders(uint movieId) public view returns (bool) {
-        return movieToTicketHolders[movieId];
+    function getTimeSlot(
+        uint256 movieId
+    ) public view returns (TimeSlotStruct[] memory MovieSlots) {
+        uint256 available;
+        for (uint i = 0; i < _totalSlots.current(); i++) {
+            if (
+                movieTimeSlot[i + 1].movieId == movieId &&
+                !movieTimeSlot[i + 1].deleted &&
+                movieTimeSlot[i + 1].startTime > currentTime()
+            ) {
+                available++;
+            }
+        }
+
+        MovieSlots = new TimeSlotStruct[](available);
+
+        uint256 index;
+        for (uint i = 0; i < _totalSlots.current(); i++) {
+            if (
+                movieTimeSlot[i + 1].movieId == movieId &&
+                !movieTimeSlot[i + 1].deleted &&
+                movieTimeSlot[i + 1].startTime > currentTime()
+            ) {
+                MovieSlots[index++] = movieTimeSlot[i + 1];
+            }
+        }
+    }
+
+    function buyTicket(
+        uint256 movieId,
+        uint256 slotId,
+        uint256 tickets
+    ) public payable {
+        require(
+            movieExists[movieId] && movieTimeSlot[slotId].movieId == movieId,
+            "Movie not found"
+        );
+        require(
+            msg.value >= movieTimeSlot[slotId].ticketCost * tickets,
+            "Insufficient amount"
+        );
+        require(
+            movieTimeSlot[slotId].capacity < movieTimeSlot[slotId].seats,
+            "Out of capacity"
+        );
+
+        for (uint i = 0; i < tickets; i++) {
+            _totalTickets.increment();
+            TicketStruct memory ticket;
+
+            ticket.id = _totalTickets.current();
+            ticket.cost = movieTimeSlot[slotId].ticketCost;
+            ticket.day = movieTimeSlot[slotId].day;
+            ticket.slotId = slotId;
+            ticket.owner = msg.sender;
+            ticket.timestamp = currentTime();
+
+            ticketHolder[movieId][slotId].push(msg.sender);
+        }
+
+        balance += movieTimeSlot[slotId].ticketCost * tickets;
+        movieTimeSlot[slotId].seats += tickets;
+    }
+
+    function getMovieTicketHolders(
+        uint256 movieId,
+        uint256 slotId
+    ) public view returns (address[] memory) {
+        return ticketHolder[movieId][slotId];
+    }
+
+    function withdrawTo(address to, uint256 amount) public onlyOwner {
+        require(balance >= amount, "Insufficient fund");
+        balance -= amount;
+        payTo(to, amount);
     }
 
     function payTo(address to, uint256 amount) internal {

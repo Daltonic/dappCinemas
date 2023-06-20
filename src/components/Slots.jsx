@@ -1,3 +1,6 @@
+import { toast } from "react-toastify"
+import { deleteSlot, publishTimeSlot } from "../services/blockchain"
+
 const Slots = ({ filteredSlots, movie }) => {
   const [slotsModal] = useGlobalState('slotsModal')
   const handleClose = () => {
