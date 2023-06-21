@@ -2,7 +2,7 @@ import { truncate, useGlobalState } from '../store'
 import Image from '../asset/heroimage.jpg'
 import { Link } from 'react-router-dom'
 
-const BrowsePage = () => {
+const ListMovies = () => {
   const [movies] = useGlobalState('movies')
 
   return (
@@ -42,7 +42,7 @@ const BrowsePage = () => {
   )
 }
 
-export default BrowsePage
+export default ListMovies
 
 const MovieCard = ({ movie }) => {
   return (

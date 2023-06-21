@@ -15,7 +15,7 @@ const TimeSlots = () => {
   }, [])
 
   return (
-    <div className="w-full min-h-[89vh] p-3 space-y-6">
+    <div className="w-full min-h-screen p-3 space-y-6 mb-10">
       <h3 className="my-3 text-3xl font-bold">
         Timeslots: <span className="text-gray-500">{movie?.name}</span>
       </h3>

@@ -248,17 +248,6 @@ const getSlots = async (movieId) => {
   }
 }
 
-const getTicketHolders = async (movieId, id) => {
-  if (!ethereum) return alert('Please install metamask')
-  try {
-    const contract = await getEthereumContract()
-    const ticketHolders = await contract.getTicketHolders(movieId, id)
-    setGlobalState('ticketHolders', structuredTicket(ticketHolders))
-  } catch (err) {
-    reportError(err)
-  }
-}
-
 const movieSlots = async (movieId) => {
   try {
     if (!ethereum) return alert('Please install metamask')
@@ -266,6 +255,17 @@ const movieSlots = async (movieId) => {
     const slots = await contract.getTimeSlots(movieId)
     // console.log(structuredTimeslot(slots))
     setGlobalState('slotsForMovie', structuredTimeslot(slots))
+  } catch (err) {
+    reportError(err)
+  }
+}
+
+const getTicketHolders = async (movieId, id) => {
+  if (!ethereum) return alert('Please install metamask')
+  try {
+    const contract = await getEthereumContract()
+    const ticketHolders = await contract.getTicketHolders(movieId, id)
+    setGlobalState('ticketHolders', structuredTicket(ticketHolders))
   } catch (err) {
     reportError(err)
   }

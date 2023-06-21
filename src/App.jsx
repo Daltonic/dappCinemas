@@ -4,8 +4,8 @@ import { isWalletConnected, loadBlockchainData } from './services/blockchain'
 import Sidebar from './components/Sidebar'
 import Header from './components/Header'
 import Addmovie from './pages/Addmovie'
-import BrowsePage from './pages/BrowsePage'
-import MovieDetailsPage from './pages/MovieDetailsPage'
+import ListMovies from './pages/ListMovies'
+import MovieDetails from './pages/MovieDetails'
 import ManageMovies from './pages/ManageMovies'
 import { ToastContainer } from 'react-toastify'
 import UpdateMovie from './components/UpdateMovie'
@@ -28,8 +28,8 @@ const App = () => {
       <div className="flex-1 overflow-auto">
         <Header />
         <Routes>
-          <Route path="/" element={<BrowsePage />} />
-          <Route path="/movie/:id" element={<MovieDetailsPage />} />
+          <Route path="/" element={<ListMovies />} />
+          <Route path="/movie/:id" element={<MovieDetails />} />
           <Route path="/timeslot/:id" element={<TimeSlots />} />
           <Route path="/timeslot/add/:id" element={<AddTimeslot />} />
           <Route path="/add/movies" element={<Addmovie />} />
