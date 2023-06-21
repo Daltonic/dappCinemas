@@ -19,7 +19,7 @@ const MovieAction = ({ movie }) => {
   }
 
   const openAddSlotMovie = () => {
-    setGlobalState('singleMovie', movie)
+    setGlobalState('movie', movie)
     setGlobalState('addSlotModal', 'scale-100')
   }
 

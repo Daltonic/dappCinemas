@@ -118,13 +118,13 @@ const deleteMovie = async (id) => {
   })
 }
 
-const addSlot = async ({
+const addTimeslot = async ({
   movieId,
-  ticketCost,
-  startTime,
-  endTime,
-  capacity,
-  day,
+  ticketCosts,
+  startTimes,
+  endTimes,
+  capacities,
+  viewingDays,
 }) => {
   if (!ethereum) return alert('Please install metamask')
 
@@ -132,13 +132,13 @@ const addSlot = async ({
     try {
       const contract = await getEthereumContract()
 
-      tx = await contract.addSlot(
+      tx = await contract.addTimeslot(
         movieId,
-        toWei(ticketCost),
-        startTime,
-        endTime,
-        capacity,
-        day
+        ticketCosts,
+        startTimes,
+        endTimes,
+        capacities,
+        viewingDays
       )
 
       await tx.wait()
@@ -254,11 +254,11 @@ const getMovie = async (id) => {
   }
 }
 
-const getSlots = async (day) => {
+const getSlots = async (movieId) => {
   if (!ethereum) return alert('Please install metamask')
   try {
     const contract = await getEthereumContract()
-    const slots = await contract.getSlots(day)
+    const slots = await contract.getMovieTimeSlots(movieId)
     setGlobalState('slotsForDay', structuredTimeslot(slots))
   } catch (err) {
     reportError(err)
@@ -280,7 +280,8 @@ const movieSlots = async (movieId) => {
   try {
     if (!ethereum) return alert('Please install metamask')
     const contract = await getEthereumContract()
-    const slots = await contract.getSlotsForMovie(movieId)
+    const slots = await contract.getTimeSlots(movieId)
+    // console.log(structuredTimeslot(slots))
     setGlobalState('slotsForMovie', structuredTimeslot(slots))
   } catch (err) {
     reportError(err)
@@ -322,10 +323,11 @@ const structuredTimeslot = (slots) =>
     startTime: slot.startTime.toNumber(),
     endTime: slot.endTime.toNumber(),
     capacity: Number(slot.capacity),
-    seatings: Number(slot.seatings),
+    seats: Number(slot.seatings),
     deleted: slot.deleted,
-    published: slot.published,
+    completed: slot.published,
     day: slot.day.toNumber(),
+    balance: fromWei(slot.balance),
   }))
 
 const structuredTicket = (tickets) =>
@@ -348,7 +350,7 @@ export {
   addMovie,
   updateMovie,
   deleteMovie,
-  addSlot,
+  addTimeslot,
   deleteSlot,
   publishTimeSlot,
   buyTicket,
@@ -358,5 +360,6 @@ export {
   movieToTicketHolders,
   getTicketHolders,
   getOwner,
+  toWei,
   withdraw,
 }

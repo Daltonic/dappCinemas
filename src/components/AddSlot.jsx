@@ -3,23 +3,29 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { FaTimes } from 'react-icons/fa'
 import { useGlobalState, setGlobalState } from '../store'
-import { getSlots, addSlot, structuredTimeslot } from '../services/blockchain'
+import { getSlots, addTimeslot, toWei } from '../services/blockchain'
 import { toast } from 'react-toastify'
 
 const AddSlot = () => {
   const [addSlotModal] = useGlobalState('addSlotModal')
-  const [singleMovie] = useGlobalState('singleMovie')
+  const [movie] = useGlobalState('movie')
   const [slotsForDay] = useGlobalState('slotsForDay')
 
-  const [ticketPrice, setTicketPrice] = useState('')
+  const [ticketCost, setTicketCost] = useState('')
   const [startTime, setStartTime] = useState(null)
   const [endTime, setEndTime] = useState(null)
   const [capacity, setCapacity] = useState('')
-  const [day, setDay] = useState(null)
-  const [blockedStamps, setBlockedStamps] = useState([])
-  const [show, setShow] = useState(false)
+  const [seletedDay, setSeletedDay] = useState(null)
 
-  const timeInterval = 10
+  const [blockedStamps, setBlockedStamps] = useState([])
+
+  const [ticketCosts, setTicketCosts] = useState([])
+  const [startTimes, setStartTimes] = useState([])
+  const [endTimes, setEndTimes] = useState([])
+  const [capacities, setCapacities] = useState([])
+  const [viewingDays, setViewingDays] = useState([])
+
+  const timeInterval = 30
 
   const handleSelectedDay = (date) => {
     const day = new Date(date)
@@ -27,15 +33,17 @@ const AddSlot = () => {
     const newDate = new Date(
       `${day.toLocaleDateString('en-US', options).replace(/\//g, '-')}`
     ).getTime()
-    setDay(newDate)
-    const startOfDay = new Date(day)
+
+    setSeletedDay(newDate)
+    const startOfDay = new Date(seletedDay)
     startOfDay.setHours(0, 0, 0, 0)
+
     if (startOfDay.toLocaleDateString() === new Date().toLocaleDateString()) {
       setStartTime(new Date())
       setEndTime(new Date())
     } else {
-      setStartTime(new Date(day))
-      setEndTime(new Date(day))
+      setStartTime(new Date(seletedDay))
+      setEndTime(new Date(seletedDay))
     }
   }
 
@@ -43,54 +51,38 @@ const AddSlot = () => {
     setGlobalState('addSlotModal', 'scale-0')
   }
 
-  // Get the start of the selected day
-  const startOfDay = new Date(day)
-  startOfDay.setHours(0, 0, 0, 0)
+  useEffect(async () => {
+    if (!seletedDay) return
+    await getSlots(movie.id)
+    initAvailableSlot()
+  }, [seletedDay])
 
-  // Get the minimum time for the start time picker
-  const minStartTime =
-    startOfDay.toLocaleDateString() === new Date().toLocaleDateString()
-      ? new Date()
-      : startOfDay
+  const dateMax = () => {
+    const startOfDay = new Date(seletedDay)
+    startOfDay.setHours(0, 0, 0, 0)
+    const minStartTime =
+      startOfDay.toLocaleDateString() === new Date().toLocaleDateString()
+        ? new Date()
+        : startOfDay
 
-  // Calculate the maximum time for the start time picker
-  const maxStartTime = new Date(day).setHours(23, 59, 59, 999)
+    const maxStartTime = new Date(seletedDay).setHours(23, 59, 59, 999)
+    const minEndTime = new Date(startTime)
+    const maxEndTime = new Date(seletedDay).setHours(23, 59, 59, 999)
 
-  // Calculate the minimum time for the end time picker
-  const minEndTime = new Date(startTime)
+    return { startOfDay, minStartTime, maxStartTime, maxEndTime, minEndTime }
+  }
 
-  // Calculate the maximum time for the end time picker
-  const maxEndTime = new Date(day).setHours(23, 59, 59, 999)
-
-  useEffect(() => {
-    if (!day) return
-
-    getSlots(day)
-      .then(() => {
-        setShow(false)
-      })
-      .catch((error) => {
-        console.error(error)
-      })
-  }, [day])
-
-  useEffect(() => {
-    if (!slotsForDay.length) {
-      setShow(true)
-      setBlockedStamps([])
-      return
-    }
-
-    // Check if there are slots available for the selected day
+  const initAvailableSlot = () => {
     const slotsAvailable = slotsForDay.some((slot) => !slot.deleted)
 
     if (slotsAvailable) {
       const filteredTimeSlots = slotsForDay.filter((slot) => !slot.deleted)
-
       const timestamps = []
+
       filteredTimeSlots.forEach((slot) => {
         const { startTime, endTime } = slot
         let currTime = new Date(startTime)
+
         while (currTime < endTime) {
           timestamps.push(currTime.getTime())
           currTime.setMinutes(currTime.getMinutes() + 10)
@@ -98,34 +90,57 @@ const AddSlot = () => {
       })
 
       setBlockedStamps(timestamps)
-      setShow(true)
     } else {
-      setShow(true)
+      setBlockedStamps([])
     }
-  }, [slotsForDay])
+  }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    if (!day || !startTime || !endTime || !capacity || !ticketPrice) return
-    const params = {
-      movieId: singleMovie.id,
-      ticketCost: ticketPrice,
-      startTime: new Date(startTime).getTime(),
-      endTime: new Date(endTime).getTime(),
-      capacity: capacity,
-      day,
-    }
+    if (!seletedDay || !startTime || !endTime || !capacity || !ticketCost)
+      return
+
+    setTicketCosts((prev) => [toWei(ticketCost), ...prev])
+    setStartTimes((prev) => [new Date(startTime).getTime(), ...prev])
+    setEndTimes((prev) => [new Date(endTime).getTime(), ...prev])
+    setCapacities((prev) => [capacity, ...prev])
+    setViewingDays((prev) => [seletedDay, ...prev])
+
+    resetForm()
+  }
+
+  const saveMovieSlot = async () => {
+    if (
+      viewingDays.length < 1 ||
+      startTimes.length < 1 ||
+      endTimes.length < 1 ||
+      capacities.length < 1 ||
+      ticketCosts.length < 1
+    )
+      return
 
     await toast.promise(
       new Promise(async (resolve, reject) => {
-        await addSlot(params)
-          .then(async () => {
-            resetForm()
+        const params = {
+          movieId: movie.id,
+          ticketCosts,
+          startTimes,
+          endTimes,
+          capacities,
+          viewingDays,
+        }
+
+        await addTimeslot(params)
+          .then((res) => {
+            setTicketCosts([])
+            setStartTimes([])
+            setEndTimes([])
+            setCapacities([])
+            setViewingDays([])
             handleClose()
-            await getSlots(day)
-            resolve()
+            resolve(res)
           })
-          .catch(() => reject())
+          .catch((error) => reject(error))
       }),
       {
         pending: 'Approve transaction...',
@@ -136,12 +151,38 @@ const AddSlot = () => {
   }
 
   const resetForm = () => {
-    setDay(null)
+    setSeletedDay(null)
     setStartTime(null)
     setEndTime(null)
-    setTicketPrice('')
+    setTicketCost('')
     setCapacity('')
-    setShow(false)
+  }
+
+  const removeSlot = (index) => {
+    ticketCosts.splice(index, 1)
+    startTimes.splice(index, 1)
+    endTimes.splice(index, 1)
+    capacities.splice(index, 1)
+    viewingDays.splice(index, 1)
+
+    setTicketCosts((prevState) => [...prevState])
+    setStartTimes((prevState) => [...prevState])
+    setEndTimes((prevState) => [...prevState])
+    setCapacities((prevState) => [...prevState])
+    setViewingDays((prevState) => [...prevState])
+  }
+
+  const convertTimestampToTime = (timestamp) => {
+    const date = new Date(timestamp)
+    let hours = date.getHours()
+    const minutes = date.getMinutes()
+    const amPm = hours >= 12 ? 'PM' : 'AM'
+    hours = hours % 12 || 12
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')} ${amPm}`
+
+    return formattedTime
   }
 
   return (
@@ -174,96 +215,127 @@ const AddSlot = () => {
           bg-gray-300 rounded-xl mt-5 p-2"
           >
             <DatePicker
-              selected={day}
+              selected={seletedDay}
               onChange={(date) => handleSelectedDay(date)}
               dateFormat="dd/MM/yyyy"
-              placeholderText="Select day..."
+              placeholderText="Select Day..."
               minDate={Date.now()}
               className="block w-full text-sm text-slate-500 bg-transparent
               border-0 focus:outline-none focus:ring-0"
             />
           </div>
-          {show && day ? (
-            <>
-              {console.log(blockedStamps)}
-              <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
-                <DatePicker
-                  selected={startTime}
-                  onChange={setStartTime}
-                  showTimeSelect
-                  showTimeSelectOnly
-                  minDate={new Date(day)}
-                  maxDate={new Date(day)}
-                  minTime={minStartTime}
-                  maxTime={maxStartTime}
-                  timeCaption="Start Time"
-                  excludeTimes={blockedStamps}
-                  timeIntervals={timeInterval}
-                  dateFormat="h:mm aa"
-                  placeholderText="Select start time..."
-                  className="block w-full text-sm text-slate-500 bg-transparent
-                  border-0 focus:outline-none focus:ring-0"
-                />
-              </div>
 
-              <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
-                <DatePicker
-                  selected={endTime}
-                  onChange={setEndTime}
-                  showTimeSelect
-                  showTimeSelectOnly
-                  timeFormat="p"
-                  timeIntervals={timeInterval}
-                  excludeTimes={blockedStamps}
-                  minDate={new Date(day)}
-                  maxDate={new Date(day)}
-                  minTime={minEndTime}
-                  maxTime={maxEndTime}
-                  timeCaption="End Time"
-                  dateFormat="h:mm aa"
-                  placeholderText="Select end time..."
-                  className="block w-full text-sm text-slate-500 bg-transparent
-                   border-0 focus:outline-none focus:ring-0"
-                />
-              </div>
+          <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
+            <DatePicker
+              selected={startTime}
+              onChange={setStartTime}
+              showTimeSelect
+              showTimeSelectOnly
+              minDate={new Date(seletedDay)}
+              maxDate={new Date(seletedDay)}
+              minTime={dateMax().minStartTime}
+              maxTime={dateMax().maxStartTime}
+              timeCaption="Start Time"
+              excludeTimes={blockedStamps}
+              timeIntervals={timeInterval}
+              dateFormat="h:mm aa"
+              placeholderText="Select start time..."
+              className="block w-full text-sm text-slate-500 bg-transparent
+              border-0 focus:outline-none focus:ring-0"
+            />
+          </div>
 
-              <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
-                <input
-                  className="block w-full text-sm text-slate-500 bg-transparent
+          <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
+            <DatePicker
+              selected={endTime}
+              onChange={setEndTime}
+              showTimeSelect
+              showTimeSelectOnly
+              timeFormat="p"
+              timeIntervals={timeInterval}
+              excludeTimes={blockedStamps}
+              minDate={new Date(seletedDay)}
+              maxDate={new Date(seletedDay)}
+              minTime={dateMax().minEndTime}
+              maxTime={dateMax().maxEndTime}
+              timeCaption="End Time"
+              dateFormat="h:mm aa"
+              placeholderText="Select end time..."
+              className="block w-full text-sm text-slate-500 bg-transparent
               border-0 focus:outline-none focus:ring-0"
-                  type="number"
-                  step={0.01}
-                  min={0.01}
-                  name="ticket_price"
-                  placeholder="Ticket price"
-                  value={ticketPrice}
-                  onChange={(e) => setTicketPrice(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
-                <input
-                  className="block w-full text-sm text-slate-500 bg-transparent
+            />
+          </div>
+
+          <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
+            <input
+              className="block w-full text-sm text-slate-500 bg-transparent
               border-0 focus:outline-none focus:ring-0"
-                  type="number"
-                  name="capacity"
-                  placeholder="set capacity "
-                  value={capacity}
-                  onChange={(e) => setCapacity(e.target.value)}
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                className="flex flex-row justify-center items-center w-full text-white text-md
-            bg-gradient-to-r from-cyan-500 to-red-500 py-2 px-5 rounded-full drop-shadow-xl border border-transparent
-            hover:bg-transparent hover:border hover:border-blue-400
-            focus:outline-none focus:ring mt-5"
-              >
-                Submit
-              </button>
-            </>
-          ) : null}
+              type="number"
+              step={0.01}
+              min={0.01}
+              name="cost"
+              placeholder="Ticket Cost e.g. 0.02 ETH"
+              value={ticketCost}
+              onChange={(e) => setTicketCost(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
+            <input
+              className="block w-full text-sm text-slate-500 bg-transparent
+              border-0 focus:outline-none focus:ring-0"
+              type="number"
+              name="capacity"
+              placeholder="Capacity e.g. 20"
+              value={capacity}
+              onChange={(e) => setCapacity(e.target.value)}
+            />
+          </div>
+
+          {startTimes.length > 0 && (
+            <div className="flex flex-wrap justify-start items-center mt-5 space-x-2 text-xs">
+              {startTimes.slice(0, 2).map((time, i) => (
+                <span
+                  key={i}
+                  className="flex space-x-1 px-2 py-1 mt-1 font-semibold text-gray-700 bg-gray-200 rounded-full"
+                >
+                  <span>
+                    {convertTimestampToTime(time)} -{' '}
+                    {convertTimestampToTime(endTimes[i])}
+                  </span>
+                  <button onClick={() => removeSlot(i)}>
+                    <FaTimes />
+                  </button>
+                </span>
+              ))}
+              {startTimes.length - startTimes.slice(0, 2).length > 0 && (
+                <span
+                  className="flex items-center justify-center px-2 py-1 
+              font-semibold text-gray-700 bg-gray-200 rounded-full
+            hover:bg-gray-300 mt-1"
+                >
+                  +{startTimes.length - startTimes.slice(0, 2).length}
+                </span>
+              )}
+            </div>
+          )}
+
+          <div className="flex justify-between items-center mt-6">
+            <button
+              type="submit"
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Add Day
+            </button>
+
+            <button
+              onClick={saveMovieSlot}
+              type="button"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Submit({ticketCosts.length})
+            </button>
+          </div>
         </form>
       </div>
     </div>
