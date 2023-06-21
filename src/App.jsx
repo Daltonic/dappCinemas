@@ -13,6 +13,7 @@ import DeleteMovie from './components/DeleteMovie'
 import { checkAuthState } from './services/chat'
 import TimeSlots from './pages/TimeSlots'
 import AddTimeslot from './pages/AddTimeslot'
+import DeleteSlot from './components/DeleteSlot'
 
 const App = () => {
   useEffect(async () => {
@@ -38,6 +39,7 @@ const App = () => {
 
       <UpdateMovie />
       <DeleteMovie />
+      <DeleteSlot />
 
       <ToastContainer
         position="bottom-center"

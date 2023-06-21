@@ -5,9 +5,9 @@ import { BiDotsVerticalRounded } from 'react-icons/bi'
 import { setGlobalState } from '../store'
 
 const TimeslotActions = ({ slot }) => {
-  const openDeleteMovie = () => {
+  const handleDelete = () => {
     setGlobalState('slot', slot)
-    setGlobalState('deleteMovieModal', 'scale-100')
+    setGlobalState('deleteSlotModal', 'scale-100')
   }
 
   return (
@@ -32,6 +32,7 @@ const TimeslotActions = ({ slot }) => {
               className={`flex justify-start items-center space-x-1 ${
                 active ? 'bg-red-500 text-white' : 'text-red-500'
               } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+              onClick={handleDelete}
             >
               <BsTrash3 size={17} />
               <span>Delete</span>

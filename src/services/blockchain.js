@@ -149,15 +149,16 @@ const addTimeslot = async ({
   })
 }
 
-const deleteSlot = async ({ id, movieId }) => {
+const deleteSlot = async ({ movieId, id }) => {
   if (!ethereum) return alert('Please install metamask')
 
   return new Promise(async (resolve, reject) => {
     try {
       const contract = await getEthereumContract()
 
-      tx = await contract.deleteSlot(id, movieId)
+      tx = await contract.deleteTimeSlot(movieId, id)
       await tx.wait()
+      await getSlots(movieId)
       resolve(tx)
     } catch (error) {
       reportError(error)
