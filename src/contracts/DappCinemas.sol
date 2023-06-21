@@ -30,7 +30,6 @@ contract DappCinemas is Ownable {
         uint256 cost;
         uint256 timestamp;
         uint256 day;
-        bool refunded;
     }
 
     struct TimeSlotStruct {
@@ -42,8 +41,9 @@ contract DappCinemas is Ownable {
         uint256 capacity;
         uint256 seats;
         bool deleted;
-        bool published;
+        bool completed;
         uint256 day;
+        uint256 balance;
     }
 
     event Action(string actionType);
@@ -190,17 +190,34 @@ contract DappCinemas is Ownable {
             movieExists[movieId] && movieTimeSlot[slotId].movieId == movieId,
             "Movie not found"
         );
-
-        movieTimeSlot[slotId].deleted = true;
+        require(!movieTimeSlot[slotId].deleted, "Timeslot already deleted");
 
         for (uint i = 0; i < ticketHolder[movieId][slotId].length; i++) {
             payTo(
                 ticketHolder[movieId][slotId][i],
                 movieTimeSlot[slotId].ticketCost
             );
-            balance -= movieTimeSlot[slotId].ticketCost;
         }
+
+        movieTimeSlot[slotId].deleted = true;
+
+        movieTimeSlot[slotId].balance -=
+            movieTimeSlot[slotId].ticketCost *
+            ticketHolder[movieId][slotId].length;
+
         delete ticketHolder[movieId][slotId];
+    }
+
+    function markTimeSlot(uint256 movieId, uint256 slotId) public onlyOwner {
+        require(
+            movieExists[movieId] && movieTimeSlot[slotId].movieId == movieId,
+            "Movie not found"
+        );
+        require(!movieTimeSlot[slotId].deleted, "Timeslot already deleted");
+
+        movieTimeSlot[slotId].completed = true;
+        balance += movieTimeSlot[slotId].balance;
+        movieTimeSlot[slotId].balance = 0;
     }
 
     function getMovieTimeSlots(
@@ -280,7 +297,7 @@ contract DappCinemas is Ownable {
             "Insufficient amount"
         );
         require(
-            movieTimeSlot[slotId].capacity < movieTimeSlot[slotId].seats,
+            movieTimeSlot[slotId].capacity > movieTimeSlot[slotId].seats,
             "Out of capacity"
         );
 
@@ -298,8 +315,10 @@ contract DappCinemas is Ownable {
             ticketHolder[movieId][slotId].push(msg.sender);
         }
 
-        balance += movieTimeSlot[slotId].ticketCost * tickets;
         movieTimeSlot[slotId].seats += tickets;
+        movieTimeSlot[slotId].balance +=
+            movieTimeSlot[slotId].ticketCost *
+            tickets;
     }
 
     function getMovieTicketHolders(
