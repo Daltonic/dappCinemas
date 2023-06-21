@@ -127,7 +127,6 @@ const addTimeslot = async ({
   viewingDays,
 }) => {
   if (!ethereum) return alert('Please install metamask')
-
   return new Promise(async (resolve, reject) => {
     try {
       const contract = await getEthereumContract()
@@ -142,7 +141,6 @@ const addTimeslot = async ({
       )
 
       await tx.wait()
-      await getMovies()
       resolve(tx)
     } catch (error) {
       reportError(error)
@@ -159,22 +157,6 @@ const deleteSlot = async ({ id, movieId }) => {
       const contract = await getEthereumContract()
 
       tx = await contract.deleteSlot(id, movieId)
-      await tx.wait()
-      resolve(tx)
-    } catch (error) {
-      reportError(error)
-      reject(error)
-    }
-  })
-}
-
-const publishTimeSlot = async ({ id, movieId, day }) => {
-  if (!ethereum) return alert('Please install metamask')
-
-  return new Promise(async (resolve, reject) => {
-    try {
-      const contract = await getEthereumContract()
-      tx = await contract.publishTimeSlot(id, movieId, day)
       await tx.wait()
       resolve(tx)
     } catch (error) {
@@ -258,7 +240,7 @@ const getSlots = async (movieId) => {
   if (!ethereum) return alert('Please install metamask')
   try {
     const contract = await getEthereumContract()
-    const slots = await contract.getMovieTimeSlots(movieId)
+    const slots = await contract.getTimeSlots(movieId)
     setGlobalState('slotsForDay', structuredTimeslot(slots))
   } catch (err) {
     reportError(err)
@@ -320,13 +302,13 @@ const structuredTimeslot = (slots) =>
     id: Number(slot.id),
     movieId: Number(slot.movieId),
     ticketCost: fromWei(slot.ticketCost),
-    startTime: slot.startTime.toNumber(),
-    endTime: slot.endTime.toNumber(),
+    startTime: Number(slot.startTime),
+    endTime: Number(slot.endTime),
     capacity: Number(slot.capacity),
-    seats: Number(slot.seatings),
+    seats: Number(slot.seats),
     deleted: slot.deleted,
-    completed: slot.published,
-    day: slot.day.toNumber(),
+    completed: slot.completed,
+    day: Number(slot.day),
     balance: fromWei(slot.balance),
   }))
 
@@ -352,7 +334,6 @@ export {
   deleteMovie,
   addTimeslot,
   deleteSlot,
-  publishTimeSlot,
   buyTicket,
   getMovie,
   getSlots,

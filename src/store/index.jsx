@@ -43,10 +43,24 @@ const convertTimestampToDate = (timestamp) => {
   return date.toLocaleDateString('en-US', options)
 }
 
+const convertTimestampToTime = (timestamp) => {
+  const date = new Date(timestamp)
+  let hours = date.getHours()
+  const minutes = date.getMinutes()
+  const amPm = hours >= 12 ? 'PM' : 'AM'
+  hours = hours % 12 || 12
+  const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes
+    .toString()
+    .padStart(2, '0')} ${amPm}`
+
+  return formattedTime
+}
+
 export {
   setGlobalState,
   useGlobalState,
   getGlobalState,
   truncate,
   convertTimestampToDate,
+  convertTimestampToTime,
 }

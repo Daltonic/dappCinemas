@@ -1,14 +1,13 @@
-import { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import { FaTimes } from 'react-icons/fa'
-import { useGlobalState, setGlobalState } from '../store'
-import { getSlots, addTimeslot, toWei } from '../services/blockchain'
+import { useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { addTimeslot, getSlots, toWei } from '../services/blockchain'
+import { convertTimestampToTime, useGlobalState } from '../store'
+import { FaTimes } from 'react-icons/fa'
 
-const AddSlot = () => {
-  const [addSlotModal] = useGlobalState('addSlotModal')
-  const [movie] = useGlobalState('movie')
+const AddTimeslot = () => {
   const [slotsForDay] = useGlobalState('slotsForDay')
 
   const [ticketCost, setTicketCost] = useState('')
@@ -25,6 +24,8 @@ const AddSlot = () => {
   const [capacities, setCapacities] = useState([])
   const [viewingDays, setViewingDays] = useState([])
 
+  const { id } = useParams()
+  const router = useNavigate()
   const timeInterval = 30
 
   const handleSelectedDay = (date) => {
@@ -47,13 +48,9 @@ const AddSlot = () => {
     }
   }
 
-  const handleClose = () => {
-    setGlobalState('addSlotModal', 'scale-0')
-  }
-
   useEffect(async () => {
     if (!seletedDay) return
-    await getSlots(movie.id)
+    await getSlots(id)
     initAvailableSlot()
   }, [seletedDay])
 
@@ -103,7 +100,7 @@ const AddSlot = () => {
     setTicketCosts((prev) => [toWei(ticketCost), ...prev])
     setStartTimes((prev) => [new Date(startTime).getTime(), ...prev])
     setEndTimes((prev) => [new Date(endTime).getTime(), ...prev])
-    setCapacities((prev) => [capacity, ...prev])
+    setCapacities((prev) => [Number(capacity), ...prev])
     setViewingDays((prev) => [seletedDay, ...prev])
 
     resetForm()
@@ -122,7 +119,7 @@ const AddSlot = () => {
     await toast.promise(
       new Promise(async (resolve, reject) => {
         const params = {
-          movieId: movie.id,
+          movieId: id,
           ticketCosts,
           startTimes,
           endTimes,
@@ -137,7 +134,7 @@ const AddSlot = () => {
             setEndTimes([])
             setCapacities([])
             setViewingDays([])
-            handleClose()
+            router('/timeslot/' + id)
             resolve(res)
           })
           .catch((error) => reject(error))
@@ -172,47 +169,16 @@ const AddSlot = () => {
     setViewingDays((prevState) => [...prevState])
   }
 
-  const convertTimestampToTime = (timestamp) => {
-    const date = new Date(timestamp)
-    let hours = date.getHours()
-    const minutes = date.getMinutes()
-    const amPm = hours >= 12 ? 'PM' : 'AM'
-    hours = hours % 12 || 12
-    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes
-      .toString()
-      .padStart(2, '0')} ${amPm}`
-
-    return formattedTime
-  }
-
   return (
-    <div
-      className={`fixed top-0 left-0 w-screen h-screen flex items-center justify-center
-      bg-black bg-opacity-50 transform z-50 transition-transform duration-300 ${addSlotModal}`}
-    >
-      <div className="bg-white shadow-lg shadow-slate-900 rounded-xl w-11/12 md:w-2/5 h-7/12 p-6">
+    <div className="flex justify-center items-center py-12 m-auto w-full">
+      <div className="block rounded-lg justify-center items-center m-auto sm:shadow-md p-6 shadow-gray-400 w-full sm:w-3/5">
         <form onSubmit={handleSubmit} className="flex flex-col">
-          <div className="flex flex-row justify-between items-center">
-            <p className="font-semibold">Add movie slot</p>
-            <button
-              type="button"
-              className="border-0 bg-transparent focus:outline-none"
-              onClick={handleClose}
-            >
-              <FaTimes className="text-gray-400" />
-            </button>
-          </div>
-          <div className="flex flex-col justify-center items-center rounded-xl mt-5 mb-5">
-            <div className="flex justify-center items-center rounded-full overflow-hidden h-10 w-64 shadow-md shadow-slate-300 p-4">
-              <p className="text-slate-700">
-                {' '}
-                Dapp <span className="text-red-700">Cinemas</span>
-              </p>
-            </div>
+          <div className="flex items-center justify-center mb-4">
+            <h2>Add Movies</h2>
           </div>
           <div
             className="flex flex-row justify-between items-center
-          bg-gray-300 rounded-xl mt-5 p-2"
+            bg-gray-300 rounded-xl mt-5 p-2"
           >
             <DatePicker
               selected={seletedDay}
@@ -241,7 +207,7 @@ const AddSlot = () => {
               dateFormat="h:mm aa"
               placeholderText="Select start time..."
               className="block w-full text-sm text-slate-500 bg-transparent
-              border-0 focus:outline-none focus:ring-0"
+          border-0 focus:outline-none focus:ring-0"
             />
           </div>
 
@@ -262,14 +228,14 @@ const AddSlot = () => {
               dateFormat="h:mm aa"
               placeholderText="Select end time..."
               className="block w-full text-sm text-slate-500 bg-transparent
-              border-0 focus:outline-none focus:ring-0"
+          border-0 focus:outline-none focus:ring-0"
             />
           </div>
 
           <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
             <input
               className="block w-full text-sm text-slate-500 bg-transparent
-              border-0 focus:outline-none focus:ring-0"
+          border-0 focus:outline-none focus:ring-0"
               type="number"
               step={0.01}
               min={0.01}
@@ -283,7 +249,7 @@ const AddSlot = () => {
           <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
             <input
               className="block w-full text-sm text-slate-500 bg-transparent
-              border-0 focus:outline-none focus:ring-0"
+          border-0 focus:outline-none focus:ring-0"
               type="number"
               name="capacity"
               placeholder="Capacity e.g. 20"
@@ -311,8 +277,8 @@ const AddSlot = () => {
               {startTimes.length - startTimes.slice(0, 2).length > 0 && (
                 <span
                   className="flex items-center justify-center px-2 py-1 
-              font-semibold text-gray-700 bg-gray-200 rounded-full
-            hover:bg-gray-300 mt-1"
+                font-semibold text-gray-700 bg-gray-200 rounded-full
+                hover:bg-gray-300 mt-1"
                 >
                   +{startTimes.length - startTimes.slice(0, 2).length}
                 </span>
@@ -342,4 +308,4 @@ const AddSlot = () => {
   )
 }
 
-export default AddSlot
+export default AddTimeslot

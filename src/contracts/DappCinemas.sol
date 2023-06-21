@@ -171,17 +171,17 @@ contract DappCinemas is Ownable {
 
         for (uint i = 0; i < viewingDays.length; i++) {
             _totalSlots.increment();
-            TimeSlotStruct memory movieSlot;
+            TimeSlotStruct memory slot;
 
-            movieSlot.id = _totalSlots.current();
-            movieSlot.movieId = movieId;
-            movieSlot.ticketCost = ticketCosts[i];
-            movieSlot.startTime = startTimes[i];
-            movieSlot.endTime = endTimes[i];
-            movieSlot.day = viewingDays[i];
-            movieSlot.capacity = capacities[i];
+            slot.id = _totalSlots.current();
+            slot.movieId = movieId;
+            slot.ticketCost = ticketCosts[i];
+            slot.startTime = startTimes[i];
+            slot.endTime = endTimes[i];
+            slot.day = viewingDays[i];
+            slot.capacity = capacities[i];
 
-            movieTimeSlot[movieSlot.id] = movieSlot;
+            movieTimeSlot[slot.id] = slot;
         }
     }
 
@@ -227,8 +227,7 @@ contract DappCinemas is Ownable {
         for (uint i = 0; i < _totalSlots.current(); i++) {
             if (
                 movieTimeSlot[i + 1].movieId == movieId &&
-                !movieTimeSlot[i + 1].deleted &&
-                movieTimeSlot[i + 1].startTime > currentTime()
+                !movieTimeSlot[i + 1].deleted
             ) {
                 available++;
             }
@@ -240,8 +239,7 @@ contract DappCinemas is Ownable {
         for (uint i = 0; i < _totalSlots.current(); i++) {
             if (
                 movieTimeSlot[i + 1].movieId == movieId &&
-                !movieTimeSlot[i + 1].deleted &&
-                movieTimeSlot[i + 1].startTime > currentTime()
+                !movieTimeSlot[i + 1].deleted
             ) {
                 MovieSlots[index++] = movieTimeSlot[i + 1].startTime;
                 MovieSlots[index++] = movieTimeSlot[i + 1].endTime;
@@ -262,8 +260,7 @@ contract DappCinemas is Ownable {
         for (uint i = 0; i < _totalSlots.current(); i++) {
             if (
                 movieTimeSlot[i + 1].movieId == movieId &&
-                !movieTimeSlot[i + 1].deleted &&
-                movieTimeSlot[i + 1].startTime > currentTime()
+                !movieTimeSlot[i + 1].deleted
             ) {
                 available++;
             }
@@ -275,8 +272,7 @@ contract DappCinemas is Ownable {
         for (uint i = 0; i < _totalSlots.current(); i++) {
             if (
                 movieTimeSlot[i + 1].movieId == movieId &&
-                !movieTimeSlot[i + 1].deleted &&
-                movieTimeSlot[i + 1].startTime > currentTime()
+                !movieTimeSlot[i + 1].deleted
             ) {
                 MovieSlots[index++] = movieTimeSlot[i + 1];
             }

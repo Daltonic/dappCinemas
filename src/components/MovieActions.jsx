@@ -6,6 +6,7 @@ import { TfiTicket } from 'react-icons/tfi'
 import { BsTrash3 } from 'react-icons/bs'
 import { BiDotsVerticalRounded } from 'react-icons/bi'
 import { setGlobalState } from '../store'
+import { Link } from 'react-router-dom'
 
 const MovieAction = ({ movie }) => {
   const openEditMovie = () => {
@@ -75,20 +76,21 @@ const MovieAction = ({ movie }) => {
         </Menu.Item>
         <Menu.Item>
           {({ active }) => (
-            <button
+            <Link
+              to={'/timeslot/add/' + movie.id}
               className={`flex justify-start items-center space-x-1 ${
                 active ? 'bg-gray-200 text-black' : 'text-gray-900'
               } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-              onClick={openAddSlotMovie}
             >
               <TbCalendarPlus size={17} />
               <span>Add Time Slot</span>
-            </button>
+            </Link>
           )}
         </Menu.Item>
         <Menu.Item>
           {({ active }) => (
-            <button
+            <Link
+              to={'/timeslot/' + movie.id}
               className={`flex justify-start items-center space-x-1 ${
                 active ? 'bg-gray-200 text-black' : 'text-gray-900'
               } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
@@ -96,7 +98,7 @@ const MovieAction = ({ movie }) => {
             >
               <FaRegCalendarCheck size={17} />
               <span>All Slots</span>
-            </button>
+            </Link>
           )}
         </Menu.Item>
         <Menu.Item>

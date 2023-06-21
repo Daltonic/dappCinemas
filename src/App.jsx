@@ -8,10 +8,11 @@ import BrowsePage from './pages/BrowsePage'
 import MovieDetailsPage from './pages/MovieDetailsPage'
 import ManageMovies from './pages/ManageMovies'
 import { ToastContainer } from 'react-toastify'
-import AddSlot from './components/AddSlot'
 import UpdateMovie from './components/UpdateMovie'
 import DeleteMovie from './components/DeleteMovie'
 import { checkAuthState } from './services/chat'
+import TimeSlots from './pages/TimeSlots'
+import AddTimeslot from './pages/AddTimeslot'
 
 const App = () => {
   useEffect(async () => {
@@ -28,12 +29,13 @@ const App = () => {
         <Routes>
           <Route path="/" element={<BrowsePage />} />
           <Route path="/movie/:id" element={<MovieDetailsPage />} />
+          <Route path="/timeslot/:id" element={<TimeSlots />} />
+          <Route path="/timeslot/add/:id" element={<AddTimeslot />} />
           <Route path="/add/movies" element={<Addmovie />} />
           <Route path="/manage/movies" element={<ManageMovies />} />
         </Routes>
       </div>
 
-      <AddSlot />
       <UpdateMovie />
       <DeleteMovie />
 
