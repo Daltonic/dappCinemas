@@ -101,13 +101,13 @@ const updateMovie = async ({ id, name, imageUrl, genre, description }) => {
   })
 }
 
-const deleteMovie = async (id) => {
+const deleteMovie = async (movieId) => {
   if (!ethereum) return alert('Please install metamask')
 
   return new Promise(async (resolve, reject) => {
     try {
       const contract = await getEthereumContract()
-      tx = await contract.deleteMovie(id)
+      tx = await contract.deleteMovie(movieId)
       await tx.wait()
       await loadBlockchainData()
       resolve(tx)
@@ -262,17 +262,6 @@ const getSlot = async (slotId) => {
   }
 }
 
-const movieSlots = async (movieId) => {
-  try {
-    if (!ethereum) return alert('Please install metamask')
-    const contract = await getEthereumContract()
-    const slots = await contract.getTimeSlots(movieId)
-    setGlobalState('slotsForMovie', structuredTimeslot(slots))
-  } catch (err) {
-    reportError(err)
-  }
-}
-
 const getTicketHolders = async (movieId, id) => {
   if (!ethereum) return alert('Please install metamask')
   try {
@@ -312,19 +301,26 @@ const structuredMovie = (movies) =>
   }))
 
 const structuredTimeslot = (slots) =>
-  slots.map((slot) => ({
-    id: Number(slot.id),
-    movieId: Number(slot.movieId),
-    ticketCost: fromWei(slot.ticketCost),
-    startTime: Number(slot.startTime),
-    endTime: Number(slot.endTime),
-    capacity: Number(slot.capacity),
-    seats: Number(slot.seats),
-    deleted: slot.deleted,
-    completed: slot.completed,
-    day: Number(slot.day),
-    balance: fromWei(slot.balance),
-  }))
+  slots
+    .map((slot) => ({
+      id: Number(slot.id),
+      movieId: Number(slot.movieId),
+      ticketCost: fromWei(slot.ticketCost),
+      startTime: Number(slot.startTime),
+      endTime: Number(slot.endTime),
+      capacity: Number(slot.capacity),
+      seats: Number(slot.seats),
+      deleted: slot.deleted,
+      completed: slot.completed,
+      day: Number(slot.day),
+      balance: fromWei(slot.balance),
+    }))
+    .sort((a, b) => {
+      if (a.day !== b.day) {
+        return a.day - b.day
+      }
+      return a.startTime - b.startTime
+    })
 
 const structuredTicket = (tickets) =>
   tickets.map((ticket) => ({
@@ -352,7 +348,6 @@ export {
   getMovie,
   getSlots,
   getSlot,
-  movieSlots,
   movieToTicketHolders,
   getTicketHolders,
   getOwner,

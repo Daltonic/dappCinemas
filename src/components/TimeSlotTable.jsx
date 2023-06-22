@@ -1,6 +1,7 @@
 import React from 'react'
 import { convertTimestampToDate, convertTimestampToTime } from '../store'
 import TimeslotActions from './TimeslotActions'
+import { Link } from 'react-router-dom'
 
 const TimeSlotTable = ({ slots }) => {
   return (
@@ -39,7 +40,9 @@ const TimeSlotTable = ({ slots }) => {
             <tr key={i} className="border-b">
               <td className="px-6 py-4 whitespace-nowrap">{slot.id}</td>
               <td className="px-6 py-4 whitespace-nowrap text-blue-500">
-                {convertTimestampToDate(slot.day)}
+                <Link to={`/timeslot/${slot.movieId}/${slot.id}`}>
+                  {convertTimestampToDate(slot.day)}
+                </Link>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 {slot.ticketCost} ETH

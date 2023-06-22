@@ -1,17 +1,38 @@
 import { RiErrorWarningFill } from 'react-icons/ri'
 import { useGlobalState, setGlobalState } from '../store'
+import { toast } from 'react-toastify'
+import { deleteMovie } from '../services/blockchain'
+import { FaTimes } from 'react-icons/fa'
 
 const DeleteMovie = () => {
   const [deleteMovieModal] = useGlobalState('deleteMovieModal')
   const [movie] = useGlobalState('movie')
 
-  const handleClose = () => {
+  const closeModal = () => {
     setGlobalState('deleteMovieModal', 'scale-0')
     setGlobalState('movie', null)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await deleteMovie(movie.id)
+          .then((res) => {
+            closeModal()
+            resolve(res)
+          })
+          .catch((error) => {
+            console.log(error)
+            reject(error)
+          })
+      }),
+      {
+        pending: 'Approve transaction...',
+        success: 'Movie deleted successfully 👌',
+        error: 'Encountered error 🤯',
+      }
+    )
   }
 
   return (
@@ -22,14 +43,15 @@ const DeleteMovie = () => {
         <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="flex flex-row justify-between items-center">
             <p className="font-semibold">Delete Movie</p>
+            <button
+              type="button"
+              className="border-0 bg-transparent focus:outline-none"
+              onClick={closeModal}
+            >
+              <FaTimes className="text-gray-400" />
+            </button>
           </div>
           <div className="flex flex-col justify-center items-center rounded-xl mt-5 mb-5">
-            <div className="flex justify-center items-center rounded-full overflow-hidden h-10 w-40 shadow-md shadow-slate-300 p-4 mb-4">
-              <p className="text-slate-700">
-                {' '}
-                Dapp <span className="text-red-700">Cinemas</span>
-              </p>
-            </div>
             <RiErrorWarningFill className="text-6xl text-red-700 " />
             <p className="p-2">
               Are you sure you want to delete{' '}
@@ -37,17 +59,13 @@ const DeleteMovie = () => {
             </p>
           </div>
 
-          <div className="flex space-x-4 justify-between">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full"
-              onClick={handleClose}
-            >
-              Cancel
-            </button>
-            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-5 rounded-full">
-              Proceed
-            </button>
-          </div>
+          <button
+            className="flex flex-row justify-center items-center w-full text-white text-md
+            bg-red-500 py-2 px-5 rounded-full drop-shadow-xl border border-transparent
+            hover:bg-transparent hover:border-red-500 hover:text-red-500 focus:outline-none mt-5"
+          >
+            Delete
+          </button>
         </form>
       </div>
     </div>
