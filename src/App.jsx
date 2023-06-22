@@ -16,6 +16,7 @@ import AddTimeslot from './pages/AddTimeslot'
 import DeleteSlot from './components/DeleteSlot'
 import TicketHolders from './pages/TicketHolders'
 import FindHolder from './components/FindHolder'
+import Withdrawal from './components/Withdrawal'
 
 const App = () => {
   useEffect(async () => {
@@ -34,7 +35,10 @@ const App = () => {
           <Route path="/movie/:id" element={<MovieDetails />} />
           <Route path="/timeslot/:id" element={<TimeSlots />} />
           <Route path="/timeslot/add/:id" element={<AddTimeslot />} />
-          <Route path="/timeslot/:movieId/:slotId" element={<TicketHolders />} />
+          <Route
+            path="/timeslot/:movieId/:slotId"
+            element={<TicketHolders />}
+          />
           <Route path="/add/movies" element={<Addmovie />} />
           <Route path="/manage/movies" element={<ManageMovies />} />
         </Routes>
@@ -44,6 +48,7 @@ const App = () => {
       <DeleteMovie />
       <DeleteSlot />
       <FindHolder />
+      <Withdrawal />
 
       <ToastContainer
         position="bottom-center"

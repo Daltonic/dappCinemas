@@ -206,14 +206,15 @@ const buyTicket = async ({ movieId, id, ticketCost }) => {
   })
 }
 
-const withdraw = async ({ movieId, id }) => {
+const withdraw = async ({ account, amount }) => {
   if (!ethereum) return alert('Please install metamask')
 
   return new Promise(async (resolve, reject) => {
     try {
       const contract = await getEthereumContract()
-      tx = await contract.withdraw(movieId, id)
+      tx = await contract.withdrawTo(account, toWei(amount))
       await tx.wait()
+      await getData()
       resolve(tx)
     } catch (error) {
       reportError(error)
@@ -290,12 +291,15 @@ const getTicketHolders = async (movieId, id) => {
   }
 }
 
-const getOwner = async () => {
+const getData = async () => {
   if (!ethereum) return alert('Please install metamask')
   try {
     const contract = await getEthereumContract()
     const deployer = await contract.owner()
+    const balance = await contract.balance()
+
     setGlobalState('deployer', deployer.toLowerCase())
+    setGlobalState('balance', fromWei(balance))
   } catch (err) {
     reportError(err)
   }
@@ -303,7 +307,7 @@ const getOwner = async () => {
 
 const loadBlockchainData = async () => {
   await getMovies()
-  await getOwner()
+  await getData()
 }
 
 const structuredMovie = (movies) =>
@@ -335,13 +339,9 @@ const structuredTimeslot = (slots) =>
       balance: fromWei(slot.balance),
     }))
     .sort((a, b) => {
-      if (a.day !== b.day) {
-        return a.day - b.day
-      }
+      if (a.day !== b.day) return a.day - b.day
       return a.startTime - b.startTime
     })
-
-const structuredTimestamps = (slots) => slots.map((slot) => Number(slot))
 
 export {
   getEthereumContract,
@@ -360,7 +360,6 @@ export {
   getMovie,
   getSlots,
   markSlot,
-  getOwner,
   getSlot,
   toWei,
 }

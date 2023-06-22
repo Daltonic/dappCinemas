@@ -1,49 +1,31 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useGlobalState, setGlobalState } from '../store'
 import { FaTimes } from 'react-icons/fa'
-import { updateMovie } from '../services/blockchain'
+import { withdraw } from '../services/blockchain'
 import { toast } from 'react-toastify'
 
-const UpdateMovie = () => {
-  const [updateMovieModal] = useGlobalState('updateMovieModal')
-  const [movieData] = useGlobalState('movie')
-
-  const [movie, setMovie] = useState({
-    imageUrl: '',
-    name: '',
-    genre: '',
-    description: '',
+const Withdrawal = () => {
+  const [withdrwalModal] = useGlobalState('withdrwalModal')
+  const [transfer, setTransfer] = useState({
+    account: '',
+    amount: '',
   })
 
-  useEffect(() => {
-    if (movieData) {
-      setMovie({
-        imageUrl: movieData.imageUrl,
-        name: movieData.name,
-        genre: movieData.genre,
-        description: movieData.description,
-      })
-    }
-  }, [movieData])
-
   const closeModal = () => {
-    setGlobalState('updateMovieModal', 'scale-0')
-    setMovie({
-      imageUrl: '',
-      name: '',
-      genre: '',
-      description: '',
+    setGlobalState('withdrwalModal', 'scale-0')
+    setTransfer({
+      account: '',
+      amount: '',
     })
-    setGlobalState('movie', null)
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!movie.imageUrl || !movie.name || !movie.genre || !movie.description)
-      return
+    if (!transfer.account || !transfer.amount) return
+
     await toast.promise(
       new Promise(async (resolve, reject) => {
-        await updateMovie({ ...movie, id: movieData.id })
+        await withdraw(transfer)
           .then(async () => {
             closeModal()
             resolve()
@@ -55,7 +37,7 @@ const UpdateMovie = () => {
       }),
       {
         pending: 'Approve transaction...',
-        success: 'Movie updated successfully 👌',
+        success: 'Transfer successful 👌',
         error: 'Encountered error 🤯',
       }
     )
@@ -63,7 +45,7 @@ const UpdateMovie = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setMovie((prevMovie) => ({
+    setTransfer((prevMovie) => ({
       ...prevMovie,
       [name]: value,
     }))
@@ -72,12 +54,12 @@ const UpdateMovie = () => {
   return (
     <div
       className={`fixed top-0 left-0 w-screen h-screen flex items-center justify-center
-      bg-black bg-opacity-50 transform z-50 transition-transform duration-300 ${updateMovieModal}`}
+      bg-black bg-opacity-50 transform z-50 transition-transform duration-300 ${withdrwalModal}`}
     >
       <div className="bg-white shadow-lg shadow-slate-900 rounded-xl w-11/12 md:w-2/5 h-7/12 p-6">
         <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="flex flex-row justify-between items-center">
-            <p className="font-semibold">Edit Movie</p>
+            <p className="font-semibold">Withraw Money</p>
             <button
               type="button"
               className="border-0 bg-transparent focus:outline-none"
@@ -101,10 +83,13 @@ const UpdateMovie = () => {
             <input
               className="block w-full text-sm text-slate-500 bg-transparent
               border-0 focus:outline-none focus:ring-0"
-              type="url"
-              name="image_url"
-              placeholder="image url"
-              value={movie.imageUrl}
+              type="text"
+              name="account"
+              minLength={42}
+              maxLength={42}
+              pattern="[A-Za-z0-9]+"
+              placeholder="ETH Account"
+              value={transfer.account}
               onChange={handleChange}
               required
             />
@@ -113,45 +98,24 @@ const UpdateMovie = () => {
             <input
               className="block w-full text-sm text-slate-500 bg-transparent
               border-0 focus:outline-none focus:ring-0"
-              type="text"
-              name="name"
-              placeholder="movie name"
-              value={movie.name}
+              type="number"
+              step={0.01}
+              min={0.01}
+              name="amount"
+              placeholder="Amount (ETH)"
+              value={transfer.amount}
               onChange={handleChange}
               required
             />
           </div>
-          <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
-            <input
-              className="block w-full text-sm text-slate-500 bg-transparent
-              border-0 focus:outline-none focus:ring-0"
-              type="text"
-              name="genre"
-              placeholder="separate genre with commas, eg. hilarious, action, thrilling"
-              value={movie.genre}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="flex flex-row justify-between items-center bg-gray-300 rounded-xl mt-5 p-2">
-            <textarea
-              className="block w-full text-sm resize-none text-slate-500 bg-transparent
-              border-0 focus:outline-none focus:ring-0 h-20"
-              type="text"
-              name="description"
-              placeholder="description."
-              value={movie.description}
-              onChange={handleChange}
-              required
-            ></textarea>
-          </div>
+
           <button
             type="submit"
             className="flex flex-row justify-center items-center w-full text-white text-md
             bg-red-500 py-2 px-5 rounded-full drop-shadow-xl border border-transparent
             hover:bg-transparent hover:border-red-500 hover:text-red-500 focus:outline-none mt-5"
           >
-            Update
+            Wire Fund
           </button>
         </form>
       </div>
@@ -159,4 +123,4 @@ const UpdateMovie = () => {
   )
 }
 
-export default UpdateMovie
+export default Withdrawal

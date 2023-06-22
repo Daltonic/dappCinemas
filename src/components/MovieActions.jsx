@@ -18,10 +18,6 @@ const MovieAction = ({ movie }) => {
     setGlobalState('deleteMovieModal', 'scale-100')
   }
 
-  const openTicketsModal = () => {
-    setGlobalState('ticketsModal', 'scale-100')
-  }
-
   return (
     <Menu as="div" className="inline-block text-left">
       <Menu.Button
@@ -84,7 +80,6 @@ const MovieAction = ({ movie }) => {
               className={`flex justify-start items-center space-x-1 ${
                 active ? 'bg-gray-200 text-black' : 'text-gray-900'
               } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-              onClick={openTicketsModal}
             >
               <FaRegCalendarCheck size={17} />
               <span>All Slots</span>
