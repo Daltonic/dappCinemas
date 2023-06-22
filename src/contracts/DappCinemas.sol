@@ -221,29 +221,27 @@ contract DappCinemas is Ownable {
         movieTimeSlot[slotId].balance = 0;
     }
 
-    function getMovieTimeSlots(
-        uint256 movieId
-    ) public view returns (uint256[] memory MovieSlots) {
+    function getTimeSlotsByDay(
+        uint256 day
+    ) public view returns (TimeSlotStruct[] memory MovieSlots) {
         uint256 available;
         for (uint i = 0; i < _totalSlots.current(); i++) {
             if (
-                movieTimeSlot[i + 1].movieId == movieId &&
-                !movieTimeSlot[i + 1].deleted
+                movieTimeSlot[i + 1].day == day && !movieTimeSlot[i + 1].deleted
             ) {
                 available++;
             }
         }
 
-        MovieSlots = new uint256[](available * 2);
+        MovieSlots = new TimeSlotStruct[](available);
 
         uint256 index;
         for (uint i = 0; i < _totalSlots.current(); i++) {
             if (
-                movieTimeSlot[i + 1].movieId == movieId &&
-                !movieTimeSlot[i + 1].deleted
+                movieTimeSlot[i + 1].day == day && !movieTimeSlot[i + 1].deleted
             ) {
-                MovieSlots[index++] = movieTimeSlot[i + 1].startTime;
-                MovieSlots[index++] = movieTimeSlot[i + 1].endTime;
+                MovieSlots[index].startTime = movieTimeSlot[i + 1].startTime;
+                MovieSlots[index++].endTime = movieTimeSlot[i + 1].endTime;
             }
         }
     }

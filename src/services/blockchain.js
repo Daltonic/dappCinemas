@@ -257,6 +257,17 @@ const getSlots = async (movieId) => {
   }
 }
 
+const getSlotsByDay = async (day) => {
+  if (!ethereum) return alert('Please install metamask')
+  try {
+    const contract = await getEthereumContract()
+    const slots = await contract.getTimeSlotsByDay(day)
+    setGlobalState('currentSlots', structuredTimeslot(slots))
+  } catch (err) {
+    reportError(err)
+  }
+}
+
 const getSlot = async (slotId) => {
   if (!ethereum) return alert('Please install metamask')
   try {
@@ -330,23 +341,26 @@ const structuredTimeslot = (slots) =>
       return a.startTime - b.startTime
     })
 
+const structuredTimestamps = (slots) => slots.map((slot) => Number(slot))
+
 export {
-  connectWallet,
-  isWalletConnected,
   getEthereumContract,
   loadBlockchainData,
-  addMovie,
-  updateMovie,
+  isWalletConnected,
+  getTicketHolders,
+  getSlotsByDay,
+  connectWallet,
   deleteMovie,
   addTimeslot,
+  updateMovie,
   deleteSlot,
   buyTicket,
+  withdraw,
+  addMovie,
   getMovie,
   getSlots,
-  getSlot,
   markSlot,
-  getTicketHolders,
   getOwner,
+  getSlot,
   toWei,
-  withdraw,
 }

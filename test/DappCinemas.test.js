@@ -71,7 +71,7 @@ describe('Contracts', () => {
 
   describe('Showtime Management', () => {
     const ticketCosts = [toWei(0.02), toWei(0.04)]
-    const days = [1687305600000, 1687305600000]
+    const days = [1687305600000, 1687405600000]
     const startTimes = [1687309200000, 1687309200000]
     const endTimes = [1687314600000, 1687314600000]
     const capacities = [5, 7]
@@ -89,11 +89,11 @@ describe('Contracts', () => {
     })
 
     it('should add a showtime and ensure it is added successfully', async () => {
-      result = await contract.getMovieTimeSlots(movieId)
-      expect(result).to.have.lengthOf(4)
-
       result = await contract.getTimeSlots(movieId)
       expect(result).to.have.lengthOf(2)
+
+      result = await contract.getTimeSlotsByDay(days[0])
+      expect(result).to.have.lengthOf(1)
 
       result = await contract.getTimeSlot(slotId)
       expect(result.day).to.be.equal(days[0])

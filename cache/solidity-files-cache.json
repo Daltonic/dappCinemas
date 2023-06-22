@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/daltonic/Sites/dappCinemas/src/contracts/DappCinemas.sol": {
-      "lastModificationDate": 1687361330300,
-      "contentHash": "b0fb9defbaddf62b5098467e9514b6cc",
+      "lastModificationDate": 1687454816446,
+      "contentHash": "b2c0d728c4f19674032b91a1f5d9d79e",
       "sourceName": "src/contracts/DappCinemas.sol",
       "solcConfig": {
         "version": "0.8.11",

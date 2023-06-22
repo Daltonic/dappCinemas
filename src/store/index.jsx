@@ -4,6 +4,7 @@ const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   movies: [],
   movie: null,
   messages: [],
+  currentSlots: [],
   slotsForDay: [],
   slotsForMovie: [],
   ticketHolders: [],

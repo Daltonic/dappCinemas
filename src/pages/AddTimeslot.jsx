@@ -3,12 +3,12 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { addTimeslot, getSlots, toWei } from '../services/blockchain'
+import { addTimeslot, getSlotsByDay, toWei } from '../services/blockchain'
 import { convertTimestampToTime, useGlobalState } from '../store'
 import { FaTimes } from 'react-icons/fa'
 
 const AddTimeslot = () => {
-  const [slotsForDay] = useGlobalState('slotsForDay')
+  const [currentSlots] = useGlobalState('currentSlots')
 
   const [ticketCost, setTicketCost] = useState('')
   const [startTime, setStartTime] = useState(null)
@@ -28,7 +28,7 @@ const AddTimeslot = () => {
   const router = useNavigate()
   const timeInterval = 30
 
-  const handleSelectedDay = (date) => {
+  const handleSelectedDay = async (date) => {
     const day = new Date(date)
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
     const newDate = new Date(
@@ -46,11 +46,14 @@ const AddTimeslot = () => {
       setStartTime(new Date(seletedDay))
       setEndTime(new Date(seletedDay))
     }
+
+    await getSlotsByDay(seletedDay)
+    initAvailableSlot()
   }
 
   useEffect(async () => {
     if (!seletedDay) return
-    await getSlots(id)
+    await getSlotsByDay(seletedDay)
     initAvailableSlot()
   }, [seletedDay])
 
@@ -70,26 +73,19 @@ const AddTimeslot = () => {
   }
 
   const initAvailableSlot = () => {
-    const slotsAvailable = slotsForDay.some((slot) => !slot.deleted)
+    const timestamps = []
 
-    if (slotsAvailable) {
-      const filteredTimeSlots = slotsForDay.filter((slot) => !slot.deleted)
-      const timestamps = []
+    currentSlots.forEach((slot) => {
+      const { startTime, endTime } = slot
+      let currTime = new Date(startTime)
 
-      filteredTimeSlots.forEach((slot) => {
-        const { startTime, endTime } = slot
-        let currTime = new Date(startTime)
-
-        while (currTime < endTime) {
-          timestamps.push(currTime.getTime())
-          currTime.setMinutes(currTime.getMinutes() + 10)
-        }
-      })
-
-      setBlockedStamps(timestamps)
-    } else {
-      setBlockedStamps([])
-    }
+      while (currTime < endTime) {
+        timestamps.push(currTime.getTime())
+        currTime.setMinutes(currTime.getMinutes() + 10)
+      }
+    })
+    console.log(timestamps)
+    setBlockedStamps(timestamps)
   }
 
   const handleSubmit = (e) => {
