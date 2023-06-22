@@ -2,7 +2,6 @@ import { Menu } from '@headlessui/react'
 import { FiEdit } from 'react-icons/fi'
 import { TbCalendarPlus } from 'react-icons/tb'
 import { FaRegCalendarCheck } from 'react-icons/fa'
-import { TfiTicket } from 'react-icons/tfi'
 import { BsTrash3 } from 'react-icons/bs'
 import { BiDotsVerticalRounded } from 'react-icons/bi'
 import { setGlobalState } from '../store'
@@ -17,15 +16,6 @@ const MovieAction = ({ movie }) => {
   const openDeleteMovie = () => {
     setGlobalState('movie', movie)
     setGlobalState('deleteMovieModal', 'scale-100')
-  }
-
-  const openAddSlotMovie = () => {
-    setGlobalState('movie', movie)
-    setGlobalState('addSlotModal', 'scale-100')
-  }
-
-  const openSlots = () => {
-    setGlobalState('slotsModal', 'scale-100')
   }
 
   const openTicketsModal = () => {
@@ -99,18 +89,6 @@ const MovieAction = ({ movie }) => {
               <FaRegCalendarCheck size={17} />
               <span>All Slots</span>
             </Link>
-          )}
-        </Menu.Item>
-        <Menu.Item>
-          {({ active }) => (
-            <button
-              className={`flex justify-start items-center space-x-1 ${
-                active ? 'bg-gray-200 text-black' : 'text-gray-900'
-              } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-            >
-              <TfiTicket size={17} />
-              <span>All Holders</span>
-            </button>
           )}
         </Menu.Item>
       </Menu.Items>

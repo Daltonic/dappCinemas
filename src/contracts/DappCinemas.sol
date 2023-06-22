@@ -30,6 +30,7 @@ contract DappCinemas is Ownable {
         uint256 cost;
         uint256 timestamp;
         uint256 day;
+        bool refunded;
     }
 
     struct TimeSlotStruct {

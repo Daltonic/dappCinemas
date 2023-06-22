@@ -3,6 +3,7 @@ import { TfiTicket } from 'react-icons/tfi'
 import { BsTrash3 } from 'react-icons/bs'
 import { BiDotsVerticalRounded } from 'react-icons/bi'
 import { setGlobalState } from '../store'
+import { Link } from 'react-router-dom'
 
 const TimeslotActions = ({ slot }) => {
   const handleDelete = () => {
@@ -41,14 +42,15 @@ const TimeslotActions = ({ slot }) => {
         </Menu.Item>
         <Menu.Item>
           {({ active }) => (
-            <button
+            <Link
               className={`flex justify-start items-center space-x-1 ${
                 active ? 'bg-gray-200 text-black' : 'text-gray-900'
               } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+              to={`/timeslot/${slot.movieId}/${slot.id}`}
             >
               <TfiTicket size={17} />
               <span>All Holders</span>
-            </button>
+            </Link>
           )}
         </Menu.Item>
       </Menu.Items>

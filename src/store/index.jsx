@@ -3,7 +3,6 @@ import { createGlobalState } from 'react-hooks-global-state'
 const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   movies: [],
   movie: null,
-  singleMovie: null,
   slotsForDay: [],
   slotsForMovie: [],
   ticketHolders: [],
@@ -18,6 +17,7 @@ const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   slotsModal: 'scale-0',
   ticketsModal: 'scale-0',
   addSlotModal: 'scale-0',
+  holderSearchModal: 'scale-0',
   currentUser: null,
   chatModal: 'scale-0',
   chatCommandModal: 'scale-0',
