@@ -3,13 +3,12 @@ import { createGlobalState } from 'react-hooks-global-state'
 const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   movies: [],
   movie: null,
+  messages: [],
   slotsForDay: [],
   slotsForMovie: [],
   ticketHolders: [],
-  movieToTicketHolderStatus: null,
   connectedAccount: '',
   slot: null,
-  messages: [],
   deployer: null,
   updateMovieModal: 'scale-0',
   deleteMovieModal: 'scale-0',
@@ -23,7 +22,6 @@ const { setGlobalState, useGlobalState, getGlobalState } = createGlobalState({
   chatCommandModal: 'scale-0',
   authChatModal: 'scale-0',
   group: null,
-  messages: [],
 })
 
 const truncate = (text, startChars, endChars, maxLength) => {

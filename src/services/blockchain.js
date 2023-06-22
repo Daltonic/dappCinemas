@@ -167,6 +167,24 @@ const deleteSlot = async ({ movieId, id }) => {
   })
 }
 
+const markSlot = async ({ movieId, id }) => {
+  if (!ethereum) return alert('Please install metamask')
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract()
+
+      tx = await contract.markTimeSlot(movieId, id)
+      await tx.wait()
+      await getSlots(movieId)
+      resolve(tx)
+    } catch (error) {
+      reportError(error)
+      reject(error)
+    }
+  })
+}
+
 const buyTicket = async ({ movieId, id, ticketCost }) => {
   if (!ethereum) return alert('Please install metamask')
 
@@ -202,18 +220,6 @@ const withdraw = async ({ movieId, id }) => {
       reject(error)
     }
   })
-}
-
-const movieToTicketHolders = async (movieId) => {
-  if (!ethereum) return alert('Please install metamask')
-
-  try {
-    const contract = await getEthereumContract()
-    const result = await contract.checkForTicketHolders(movieId)
-    setGlobalState('movieToTicketHolderStatus', result)
-  } catch (err) {
-    reportError(err)
-  }
 }
 
 const getMovies = async () => {
@@ -290,15 +296,17 @@ const loadBlockchainData = async () => {
 }
 
 const structuredMovie = (movies) =>
-  movies.map((movie) => ({
-    id: Number(movie.id),
-    name: movie.name,
-    imageUrl: movie.imageUrl,
-    genre: movie.genre,
-    description: movie.description,
-    timestamp: Number(movie.timestamp),
-    deleted: movie.deleted,
-  }))
+  movies
+    .map((movie) => ({
+      id: Number(movie.id),
+      name: movie.name,
+      imageUrl: movie.imageUrl,
+      genre: movie.genre,
+      description: movie.description,
+      timestamp: Number(movie.timestamp),
+      deleted: movie.deleted,
+    }))
+    .sort((a, b) => b.timestamp - a.timestamp)
 
 const structuredTimeslot = (slots) =>
   slots
@@ -322,18 +330,6 @@ const structuredTimeslot = (slots) =>
       return a.startTime - b.startTime
     })
 
-const structuredTicket = (tickets) =>
-  tickets.map((ticket) => ({
-    id: Number(ticket.id),
-    movieId: Number(ticket.movieId),
-    slotId: Number(ticket.slotId),
-    owner: ticket.owner.toLowerCase(),
-    cost: fromWei(ticket.cost),
-    timestamp: new Date(ticket.timestamp).getTime(),
-    day: new Date(ticket.day).getTime(),
-    refunded: ticket.refunded,
-  }))
-
 export {
   connectWallet,
   isWalletConnected,
@@ -348,7 +344,7 @@ export {
   getMovie,
   getSlots,
   getSlot,
-  movieToTicketHolders,
+  markSlot,
   getTicketHolders,
   getOwner,
   toWei,

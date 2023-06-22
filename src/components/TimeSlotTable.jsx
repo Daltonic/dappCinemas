@@ -38,7 +38,7 @@ const TimeSlotTable = ({ slots }) => {
         <tbody>
           {slots.map((slot, i) => (
             <tr key={i} className="border-b">
-              <td className="px-6 py-4 whitespace-nowrap">{slot.id}</td>
+              <td className="px-6 py-4 whitespace-nowrap">{i + 1}</td>
               <td className="px-6 py-4 whitespace-nowrap text-blue-500">
                 <Link to={`/timeslot/${slot.movieId}/${slot.id}`}>
                   {convertTimestampToDate(slot.day)}
