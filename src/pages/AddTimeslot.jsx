@@ -14,7 +14,7 @@ const AddTimeslot = () => {
   const [startTime, setStartTime] = useState(null)
   const [endTime, setEndTime] = useState(null)
   const [capacity, setCapacity] = useState('')
-  const [seletedDay, setSeletedDay] = useState(null)
+  const [selectedDay, setSelectedDay] = useState(null)
 
   const [blockedStamps, setBlockedStamps] = useState([])
 
@@ -35,39 +35,37 @@ const AddTimeslot = () => {
       `${day.toLocaleDateString('en-US', options).replace(/\//g, '-')}`
     ).getTime()
 
-    setSeletedDay(newDate)
-    const startOfDay = new Date(seletedDay)
-    startOfDay.setHours(0, 0, 0, 0)
-
-    if (startOfDay.toLocaleDateString() === new Date().toLocaleDateString()) {
-      setStartTime(new Date())
-      setEndTime(new Date())
-    } else {
-      setStartTime(new Date(seletedDay))
-      setEndTime(new Date(seletedDay))
-    }
-
-    await getSlotsByDay(seletedDay)
-    initAvailableSlot()
+    setSelectedDay(newDate)
   }
 
-  useEffect(async () => {
-    if (!seletedDay) return
-    await getSlotsByDay(seletedDay)
-    initAvailableSlot()
-  }, [seletedDay])
+  useEffect(() => {
+    if (!selectedDay) return
+
+    const fetchData = async () => {
+      await getSlotsByDay(selectedDay)
+      initAvailableSlot()
+    }
+
+    fetchData()
+  }, [selectedDay])
+
+  useEffect(() => {
+    if (currentSlots.length > 0) {
+      initAvailableSlot()
+    }
+  }, [currentSlots])
 
   const dateMax = () => {
-    const startOfDay = new Date(seletedDay)
+    const startOfDay = new Date(selectedDay)
     startOfDay.setHours(0, 0, 0, 0)
     const minStartTime =
       startOfDay.toLocaleDateString() === new Date().toLocaleDateString()
         ? new Date()
         : startOfDay
 
-    const maxStartTime = new Date(seletedDay).setHours(23, 59, 59, 999)
+    const maxStartTime = new Date(selectedDay).setHours(23, 59, 59, 999)
     const minEndTime = new Date(startTime)
-    const maxEndTime = new Date(seletedDay).setHours(23, 59, 59, 999)
+    const maxEndTime = new Date(selectedDay).setHours(23, 59, 59, 999)
 
     return { startOfDay, minStartTime, maxStartTime, maxEndTime, minEndTime }
   }
@@ -84,20 +82,20 @@ const AddTimeslot = () => {
         currTime.setMinutes(currTime.getMinutes() + 10)
       }
     })
-    console.log(timestamps)
+
     setBlockedStamps(timestamps)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!seletedDay || !startTime || !endTime || !capacity || !ticketCost)
+    if (!selectedDay || !startTime || !endTime || !capacity || !ticketCost)
       return
 
     setTicketCosts((prev) => [toWei(ticketCost), ...prev])
     setStartTimes((prev) => [new Date(startTime).getTime(), ...prev])
     setEndTimes((prev) => [new Date(endTime).getTime(), ...prev])
     setCapacities((prev) => [Number(capacity), ...prev])
-    setViewingDays((prev) => [seletedDay, ...prev])
+    setViewingDays((prev) => [selectedDay, ...prev])
 
     resetForm()
   }
@@ -144,7 +142,7 @@ const AddTimeslot = () => {
   }
 
   const resetForm = () => {
-    setSeletedDay(null)
+    setSelectedDay(null)
     setStartTime(null)
     setEndTime(null)
     setTicketCost('')
@@ -177,7 +175,7 @@ const AddTimeslot = () => {
             bg-gray-300 rounded-xl mt-5 p-2"
           >
             <DatePicker
-              selected={seletedDay}
+              selected={selectedDay}
               onChange={(date) => handleSelectedDay(date)}
               dateFormat="dd/MM/yyyy"
               placeholderText="Select Day..."
@@ -193,8 +191,8 @@ const AddTimeslot = () => {
               onChange={setStartTime}
               showTimeSelect
               showTimeSelectOnly
-              minDate={new Date(seletedDay)}
-              maxDate={new Date(seletedDay)}
+              minDate={new Date(selectedDay)}
+              maxDate={new Date(selectedDay)}
               minTime={dateMax().minStartTime}
               maxTime={dateMax().maxStartTime}
               timeCaption="Start Time"
@@ -216,8 +214,8 @@ const AddTimeslot = () => {
               timeFormat="p"
               timeIntervals={timeInterval}
               excludeTimes={blockedStamps}
-              minDate={new Date(seletedDay)}
-              maxDate={new Date(seletedDay)}
+              minDate={new Date(selectedDay)}
+              maxDate={new Date(selectedDay)}
               minTime={dateMax().minEndTime}
               maxTime={dateMax().maxEndTime}
               timeCaption="End Time"
