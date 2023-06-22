@@ -1,10 +1,29 @@
 import React from 'react'
 import { convertTimestampToDate, convertTimestampToTime } from '../store'
 import { FaEthereum } from 'react-icons/fa'
+import { toast } from 'react-toastify'
+import { buyTicket } from '../services/blockchain'
 
 const TimeSlotList = ({ slots }) => {
+  const handleTicketPurchase = async (slot) => {
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await buyTicket(slot)
+          .then((res) => resolve(res))
+          .catch((error) => {
+            console.log(error)
+            reject(error)
+          })
+      }),
+      {
+        pending: 'Approve transaction...',
+        success: 'Ticket successfully purchased 👌',
+        error: 'Encountered error 🤯',
+      }
+    )
+  }
   return (
-    <div className="flex flex-col items-center mb-10">
+    <div className="flex flex-col items-center mb-10 w-full sm:w-3/6 mx-auto">
       <h2 className="text-2xl font-bold mb-2">Available Time Slots</h2>
       {slots.length > 0 ? (
         <ul className="space-y-4 w-full">
@@ -33,9 +52,10 @@ const TimeSlotList = ({ slots }) => {
 
               <button
                 className="inline-block px-3 py-2 border-2 border-red-600 font-medium text-xs
-              leading-tight uppercase rounded-full hover:bg-opacity-5 focus:outline-none
-              focus:ring-0 transition duration-150 ease-in-out hover:bg-gradient-to-r
-              from-cyan-500 to-red-500 hover:text-white hover:border-white"
+                leading-tight uppercase rounded-full hover:bg-opacity-5 focus:outline-none
+                focus:ring-0 transition duration-150 ease-in-out hover:bg-gradient-to-r
+                from-cyan-500 to-red-500 hover:text-white hover:border-white"
+                onClick={() => handleTicketPurchase(slot)}
               >
                 Buy Ticket
               </button>

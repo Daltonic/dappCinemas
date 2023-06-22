@@ -167,16 +167,19 @@ const deleteSlot = async ({ movieId, id }) => {
   })
 }
 
-const buyTicket = async ({ movieId, day, id, ticketCost }) => {
+const buyTicket = async ({ movieId, id, ticketCost }) => {
   if (!ethereum) return alert('Please install metamask')
 
   return new Promise(async (resolve, reject) => {
     try {
       const contract = await getEthereumContract()
-      tx = await contract.buyTicket(movieId, day, id, {
+
+      tx = await contract.buyTicket(movieId, id, 1, {
         value: toWei(ticketCost),
       })
+
       await tx.wait()
+      await getSlots(movieId)
       resolve(tx)
     } catch (error) {
       reportError(error)
@@ -253,7 +256,6 @@ const movieSlots = async (movieId) => {
     if (!ethereum) return alert('Please install metamask')
     const contract = await getEthereumContract()
     const slots = await contract.getTimeSlots(movieId)
-    // console.log(structuredTimeslot(slots))
     setGlobalState('slotsForMovie', structuredTimeslot(slots))
   } catch (err) {
     reportError(err)
