@@ -16,7 +16,7 @@ const getEthereumContract = async () => {
   const accounts = await ethereum.request({ method: 'eth_accounts' })
   const provider = accounts[0]
     ? new ethers.providers.Web3Provider(ethereum)
-    : new ethers.providers.JsonRpcProvider('http://127.0.0.1:8545')
+    : new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_URL)
   const wallet = accounts[0] ? null : ethers.Wallet.createRandom()
   const signer = provider.getSigner(accounts[0] ? undefined : wallet.address)
 
@@ -32,7 +32,7 @@ const isWalletConnected = async () => {
     if (accounts.length) {
       setGlobalState('connectedAccount', accounts[0])
     } else {
-      alert('Please connect wallet.')
+      reportError('Please connect wallet.')
       console.log('No accounts found.')
     }
 
@@ -308,6 +308,10 @@ const getData = async () => {
 const loadBlockchainData = async () => {
   await getMovies()
   await getData()
+}
+
+const reportError = (error) => {
+  console.log(error)
 }
 
 const structuredMovie = (movies) =>
