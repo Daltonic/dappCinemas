@@ -9,9 +9,13 @@ const TimeSlots = () => {
   const [movie] = useGlobalState('movie')
   const [slots] = useGlobalState('slotsForDay')
 
-  useEffect(async () => {
-    await getMovie(id)
-    await getSlots(id)
+  useEffect(() => {
+    const fetchData = async () => {
+      await getMovie(id)
+      await getSlots(id)
+    }
+
+    fetchData()
   }, [])
 
   return (

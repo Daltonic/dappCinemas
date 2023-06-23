@@ -39,7 +39,7 @@ const AddTimeslot = () => {
   }
 
   useEffect(() => {
-    if (!selectedDay) return
+    if (selectedDay) return
 
     const fetchData = async () => {
       await getSlotsByDay(selectedDay)
@@ -168,7 +168,7 @@ const AddTimeslot = () => {
       <div className="block rounded-lg justify-center items-center m-auto sm:shadow-md p-6 shadow-gray-400 w-full sm:w-3/5">
         <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="flex items-center justify-center mb-4">
-            <h2>Add Movies</h2>
+            <h2>Add Time Slot</h2>
           </div>
           <div
             className="flex flex-row justify-between items-center

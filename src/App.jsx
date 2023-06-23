@@ -19,10 +19,14 @@ import FindHolder from './components/FindHolder'
 import Withdrawal from './components/Withdrawal'
 
 const App = () => {
-  useEffect(async () => {
-    await isWalletConnected()
-    await loadBlockchainData()
-    await checkAuthState()
+  useEffect(() => {
+    const fetchData = async () => {
+      await isWalletConnected()
+      await loadBlockchainData()
+      await checkAuthState()
+    }
+
+    fetchData()
   }, [])
 
   return (

@@ -15,9 +15,13 @@ const TicketHolders = () => {
   const [holders] = useGlobalState('ticketHolders')
 
   useEffect(async () => {
-    await getSlot(slotId)
-    await getMovie(movieId)
-    await getTicketHolders(movieId, slotId)
+    const fetchData = async () => {
+      await getSlot(slotId)
+      await getMovie(movieId)
+      await getTicketHolders(movieId, slotId)
+    }
+
+    fetchData()
   }, [])
 
   return (

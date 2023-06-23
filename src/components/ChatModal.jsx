@@ -21,15 +21,19 @@ const ChatModal = ({ movie }) => {
     })
   }
 
-  useEffect(async () => {
-    await getMessages('guid_' + movie.id).then((msgs) => {
-      setGlobalState('messages', msgs)
-      scrollToEnd()
-    })
-    await listenForMessage('guid_' + movie.id).then((msg) => {
-      setGlobalState('messages', (prevState) => [...prevState, msg])
-      scrollToEnd()
-    })
+  useEffect(() => {
+    const fetchData = async () => {
+      await getMessages('guid_' + movie.id).then((msgs) => {
+        setGlobalState('messages', msgs)
+        scrollToEnd()
+      })
+      await listenForMessage('guid_' + movie.id).then((msg) => {
+        setGlobalState('messages', (prevState) => [...prevState, msg])
+        scrollToEnd()
+      })
+    }
+
+    fetchData()
   }, [])
 
   const scrollToEnd = () => {

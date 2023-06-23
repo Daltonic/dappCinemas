@@ -14,13 +14,17 @@ const MovieDetails = () => {
   const [slots] = useGlobalState('slotsForDay')
   const { id } = useParams()
 
-  useEffect(async () => {
-    await getMovie(id)
-    await getSlots(id)
+  useEffect(() => {
+    const fetchData = async () => {
+      await getMovie(id)
+      await getSlots(id)
 
-    setLoaded(true)
-    const GROUP = await getGroup(`guid_${id}`)
-    setGroup(GROUP)
+      setLoaded(true)
+      const GROUP = await getGroup(`guid_${id}`)
+      setGroup(GROUP)
+    }
+
+    fetchData()
   }, [])
 
   return (
@@ -51,7 +55,11 @@ const MovieDetails = () => {
 
             <ChatActions movie={movie} group={group} />
 
-            <TimeSlotList slots={slots} />
+            <TimeSlotList
+              slots={slots.filter(
+                (slot) => !slot.completed && slot.seats < slot.capacities
+              )}
+            />
           </div>
         </div>
         <ChatModal movie={movie} />
