@@ -61,7 +61,7 @@ const FindHolder = () => {
               <input
                 onChange={(e) => handleSearch(e.target.value)}
                 value={address}
-                placeholder="Search everything"
+                placeholder="Search holders ETH address"
                 className="border-none flex-1 text-m px-2 outline-none"
               />
             </div>

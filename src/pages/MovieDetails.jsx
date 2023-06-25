@@ -27,6 +27,22 @@ const MovieDetails = () => {
     fetchData()
   }, [])
 
+  const isValidTimeslot = (slot) => {
+    const currentDate = new Date()
+    currentDate.setHours(0, 0, 0, 0)
+    const currentTimestamp = currentDate.getTime()
+
+    if (
+      currentTimestamp <= slot.day &&
+      !slot.completed &&
+      slot.seats < slot.capacity
+    ) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   return (
     loaded && (
       <div className="flex flex-col w-full p-4 space-y-4">
@@ -56,9 +72,7 @@ const MovieDetails = () => {
             <ChatActions movie={movie} group={group} />
 
             <TimeSlotList
-              slots={slots.filter(
-                (slot) => !slot.completed && slot.seats < slot.capacities
-              )}
+              slots={slots.filter((slot) => isValidTimeslot(slot))}
             />
           </div>
         </div>
