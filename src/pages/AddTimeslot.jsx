@@ -39,14 +39,12 @@ const AddTimeslot = () => {
   }
 
   useEffect(() => {
-    if (selectedDay) return
-
     const fetchData = async () => {
       await getSlotsByDay(selectedDay)
       initAvailableSlot()
     }
 
-    fetchData()
+    if (selectedDay) fetchData()
   }, [selectedDay])
 
   useEffect(() => {
